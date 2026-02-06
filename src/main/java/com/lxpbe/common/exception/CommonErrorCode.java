@@ -2,19 +2,27 @@ package com.lxpbe.common.exception;
 
 import org.springframework.http.HttpStatus;
 
+import java.util.Objects;
+
 public enum CommonErrorCode implements ErrorCode {
 
-    UNEXPECTED_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "SERVER_ERROR_001", "예기치 못한 서버 에러가 발생했습니다.")
+    UNEXPECTED_SERVER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "UNEXPECTED_SERVER_ERROR", "예기치 못한 서버 에러"),
+    UNEXPECTED_DATABASE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "UNEXPECTED_DATABASE_EXCEPTION", "예기치 못한 서버 데이터베이스 에러"),
+    UNSUPPORTED_HTTP_METHOD(HttpStatus.BAD_REQUEST, "UNSUPPORTED_HTTP_METHOD", "지원되지 않은 HTTP 메서드"),
+    INVALID_ARGUMENT_ERROR(HttpStatus.BAD_REQUEST, "INVALID_ARGUMENT", "유효하지 않은 인자(공통 예외)"),
+    MISSING_HTTP_HEADER(HttpStatus.BAD_REQUEST, "MISSING_HTTP_HEADER", "필수 HTTP 요청 헤더 누락"),
+    SERVLET_EXCEPTION(HttpStatus.BAD_REQUEST, "SERVLET_EXCEPTION", "예기치 못한 서블릿 예외 발생(대개 지원하지 않는 방식으로 요청한 경우 발생합니다.)")
     // ... 필요할 때 추가
     ;
 
     // -----
 
-    private HttpStatus httpStatus;
+    private HttpStatus httpStatus;  // To Do: JSpecify(Nullaway) 도입 고려
     private String code;
     private String message;
 
     CommonErrorCode(HttpStatus httpStatus, String code, String message) {
+        Objects.requireNonNull(httpStatus, "CommonErrorCode.httpStatus 는 null 일 수 없습니다.");
         this.httpStatus = httpStatus;
         this.code = code;
         this.message = message;
