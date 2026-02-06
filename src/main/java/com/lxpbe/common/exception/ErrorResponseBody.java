@@ -13,4 +13,8 @@ public record ErrorResponseBody(
             timestamp = Instant.now();
         }
     }
+
+    public ErrorResponseBody(String code, String message) {
+        this(code, message, Instant.now());
+    }
 }
