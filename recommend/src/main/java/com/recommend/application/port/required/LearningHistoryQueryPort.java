@@ -1,6 +1,6 @@
 package com.recommend.application.port.required;
 
-import com.recommend.application.dto.LearningHistoryData;
+import com.lxp.recommend.application.dto.LearningHistoryData;
 
 import java.util.List;
 
@@ -17,5 +17,5 @@ public interface LearningHistoryQueryPort {
      * @param learnerId 학습자 ID
      * @return 학습 이력 리스트
      */
-    List<LearningHistoryData> findByLearnerId(Long learnerId);  // ✅ String → Long
+    List<LearningHistoryData> findByLearnerId(String learnerId);
 }

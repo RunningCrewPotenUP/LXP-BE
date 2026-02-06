@@ -1,13 +1,13 @@
-package com.recommend.application.service;
+package com.recommend.application.service; // 또는 com.lxp.recommend.application.service.query
 
-import com.recommend.application.dto.CourseMetaData;
-import com.recommend.application.port.provided.persistence.MemberRecommendationRepository;
-import com.recommend.application.port.required.CourseMetaQueryPort;
-import com.recommend.domain.model.MemberRecommendation;
-import com.recommend.domain.model.RecommendedCourse;
-import com.recommend.domain.model.ids.MemberId;
-import com.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
-import com.recommend.infrastructure.web.dto.response.RecommendedCourseResponse.CourseInfo;
+import com.lxp.recommend.application.dto.RecommendedCourseDto;
+import com.lxp.recommend.application.port.provided.persistence.MemberRecommendationRepository;
+import com.lxp.recommend.application.port.required.CourseMetaQueryPort;
+import com.lxp.recommend.domain.model.MemberRecommendation;
+import com.lxp.recommend.domain.model.RecommendedCourse;
+import com.lxp.recommend.domain.model.ids.MemberId;
+import com.lxp.recommend.infrastructure.external.course.dto.CourseMetaResponse;
+import com.lxp.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -19,6 +19,13 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+/**
+ * 추천 조회 Query Service
+ *
+ * 책임:
+ * - 추천 결과 조회 (Repository)
+ * - Domain Model → Response DTO 변환
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -32,15 +39,14 @@ public class RecommendQueryService {
      * 기본 상위 10개 추천 조회
      */
     @Transactional(readOnly = true)
-    public List<RecommendedCourseResponse> getTopRecommendations(Long memberId) {
+    public List<RecommendedCourseResponse> getTopRecommendations(String memberId) {
         return getTopRecommendations(memberId, DEFAULT_TOP_N);
     }
-
     /**
      * 추천 결과 조회 (개수 지정)
      */
     @Transactional(readOnly = true)
-    public List<RecommendedCourseResponse> getTopRecommendations(Long memberId, int topN) {
+    public List<RecommendedCourseResponse> getTopRecommendations(String memberId, int topN) {
         log.info("[추천 조회] memberId={}, topN={}", memberId, topN);
 
         MemberId memberIdObj = MemberId.of(memberId);
@@ -62,42 +68,39 @@ public class RecommendQueryService {
                 .toList();
 
         // 4. Course ID 목록 추출
-        List<Long> courseIds = items.stream()
+        List<String> courseIds = items.stream()
                 .map(item -> item.getCourseId().getValue())
                 .toList();
 
-        // 5. Course 메타 정보 조회 (Application DTO)
-        List<CourseMetaData> courseMetas = courseMetaQueryPort.findByCourses(courseIds);  // ✅ 기존 메서드명 유지
+        // 5. Course 메타 정보 조회
+        List<CourseMetaResponse> courseMetas = courseMetaQueryPort.findByCourses(courseIds);
 
-        // 6. Course ID → CourseMetaData 매핑
-        Map<Long, CourseMetaData> courseMetaMap = courseMetas.stream()
-                .collect(Collectors.toMap(CourseMetaData::courseId, Function.identity()));
+        // 6. Course ID → CourseMetaResponse 매핑
+        Map<String, CourseMetaResponse> courseMetaMap = courseMetas.stream()
+                .collect(Collectors.toMap(CourseMetaResponse::courseId, Function.identity()));
 
-        // 7. 결과 조합 (Application DTO → Web DTO 변환)
+        // 7. 결과 조합
         return items.stream()
                 .map(item -> {
-                    CourseMetaData courseMeta = courseMetaMap.get(item.getCourseId().getValue());
-                    if (courseMeta == null) {
-                        log.warn("[강좌 메타 없음] courseId={}", item.getCourseId().getValue());
-                        return null;
-                    }
-
-                    // ✅ CourseMetaData → CourseInfo 변환
-                    CourseInfo courseInfo = new CourseInfo(
-                            courseMeta.courseId(),
-                            "강좌 제목",  // ← Adapter에서 title 포함 필요 (다음 단계)
-                            courseMeta.tags(),
-                            courseMeta.difficulty(),
-                            courseMeta.isPublic()
-                    );
-
+                    CourseMetaResponse courseMeta = courseMetaMap.get(item.getCourseId().getValue());
                     return new RecommendedCourseResponse(
-                            courseInfo,
+                            courseMeta,
                             item.getScore(),
                             item.getRank()
                     );
                 })
-                .filter(response -> response != null)
+                .filter(response -> response.course() != null)
                 .toList();
+    }
+    /**
+     * Domain(RecommendedCourse) → DTO(RecommendedCourseDto) 변환
+     * (기존 RecommendedCourseMapper 로직 흡수)
+     */
+    private RecommendedCourseDto toDto(RecommendedCourse course) {
+        return new RecommendedCourseDto(
+                course.getCourseId().getValue(),
+                course.getScore(),
+                course.getRank()
+        );
     }
 }

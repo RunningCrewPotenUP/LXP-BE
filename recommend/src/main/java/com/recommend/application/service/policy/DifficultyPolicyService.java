@@ -1,7 +1,7 @@
 package com.recommend.application.service.policy;
 
-import com.recommend.domain.model.ids.LearnerLevel;
-import com.recommend.domain.model.ids.Level;
+import com.lxp.recommend.domain.model.ids.LearnerLevel;
+import com.lxp.recommend.domain.model.ids.Level;
 import org.springframework.stereotype.Component;
 
 import java.util.Set;

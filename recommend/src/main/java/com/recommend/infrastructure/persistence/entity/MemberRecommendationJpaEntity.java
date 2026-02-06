@@ -20,7 +20,7 @@ public class MemberRecommendationJpaEntity {
     private Long id;
 
     @Column(name = "member_id", nullable = false, unique = true)
-    private Long memberId; // ✅ String → Long
+    private String memberId; // VO 대신 원시 타입
 
     @OneToMany(
             mappedBy = "recommendation",
@@ -36,7 +36,7 @@ public class MemberRecommendationJpaEntity {
 
     // 생성 메서드 (Mapper에서 호출)
     public static MemberRecommendationJpaEntity of(
-            Long memberId,  // ✅ String → Long
+            String memberId,
             List<RecommendedCourseItemJpaEntity> items,
             LocalDateTime calculatedAt
     ) {

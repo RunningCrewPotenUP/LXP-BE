@@ -1,11 +1,11 @@
 package com.recommend.application.dto.response;
 
-import com.recommend.application.dto.RecommendedCourseDto;
+import com.lxp.recommend.application.dto.RecommendedCourseDto;
 
 import java.util.List;
 
 public record RecommendationResponse(
-        Long memberId,
+        String memberId,
         List<RecommendedCourseDto> recommendations,
         String calculatedAt
 ) {}

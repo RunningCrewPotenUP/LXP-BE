@@ -1,13 +1,13 @@
 package com.recommend.domain.model;
 
-import com.recommend.domain.exception.DuplicateCourseException;
-import com.recommend.domain.exception.RecommendLimitExceededException;
-import com.recommend.domain.model.ids.CourseId;
-import com.recommend.domain.model.ids.MemberId;
+import com.lxp.common.domain.event.AggregateRoot;
+import com.lxp.recommend.domain.exception.DuplicateCourseException;
+import com.lxp.recommend.domain.exception.RecommendLimitExceededException;
+import com.lxp.recommend.domain.model.ids.CourseId;
+import com.lxp.recommend.domain.model.ids.MemberId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -18,22 +18,15 @@ import java.util.Set;
  * 책임:
  * 1. 추천 아이템의 생명주기 관리
  * 2. 불변식 보장
- * 3. 도메인 이벤트 관리 (내장)
  */
-public class MemberRecommendation {
+public class MemberRecommendation extends AggregateRoot {
 
     private static final int MAX_RECOMMENDATION_SIZE = 10;
 
-    // ===== Aggregate Root 필드 (이벤트 관리) =====
-    private final transient List<Object> domainEvents = new ArrayList<>();
-
-    // ===== Entity 필드 =====
     private Long id; // DB PK (nullable)
     private MemberId memberId;
     private List<RecommendedCourse> items;
     private LocalDateTime calculatedAt;
-
-    // ===== 생성자 =====
 
     protected MemberRecommendation() {} // JPA 및 재구성용
 
@@ -114,32 +107,6 @@ public class MemberRecommendation {
         }
     }
 
-    // ===== 도메인 이벤트 관리 (Aggregate Root 역할) =====
-
-    /**
-     * 도메인 이벤트 등록
-     */
-    protected void registerEvent(Object event) {
-        if (event == null) {
-            throw new IllegalArgumentException("Domain event must not be null");
-        }
-        this.domainEvents.add(event);
-    }
-
-    /**
-     * 등록된 도메인 이벤트 조회 (불변 리스트)
-     */
-    public List<Object> getDomainEvents() {
-        return Collections.unmodifiableList(domainEvents);
-    }
-
-    /**
-     * 도메인 이벤트 초기화 (이벤트 발행 후 호출)
-     */
-    public void clearDomainEvents() {
-        this.domainEvents.clear();
-    }
-
     // ===== Getters =====
 
     public Long getId() {
@@ -153,6 +120,7 @@ public class MemberRecommendation {
     public List<RecommendedCourse> getItems() {
         return List.copyOf(items); // 불변 리스트 반환
     }
+
 
     public LocalDateTime getCalculatedAt() {
         return calculatedAt;

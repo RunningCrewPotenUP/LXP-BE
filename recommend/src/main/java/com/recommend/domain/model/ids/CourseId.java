@@ -8,24 +8,24 @@ import java.util.Objects;
  */
 public class CourseId {
 
-    private final Long value;  // ✅ String → Long
+    private final String value;
 
     protected CourseId() {
         this.value = null; // JPA 재구성용
     }
 
-    public CourseId(Long value) {  // ✅ Long 파라미터
-        if (value == null) {
-            throw new IllegalArgumentException("CourseId cannot be null");
+    public CourseId(String value) {
+        if (value == null || value.isBlank()) {
+            throw new IllegalArgumentException("CourseId cannot be null or blank");
         }
         this.value = value;
     }
 
-    public static CourseId of(Long value) {  // ✅ Long 파라미터
+    public static CourseId of(String value) {
         return new CourseId(value);
     }
 
-    public Long getValue() {  // ✅ Long 반환
+    public String getValue() {
         return value;
     }
 
@@ -44,6 +44,6 @@ public class CourseId {
 
     @Override
     public String toString() {
-        return String.valueOf(value);  // ✅ Long → String 변환
+        return value;
     }
 }

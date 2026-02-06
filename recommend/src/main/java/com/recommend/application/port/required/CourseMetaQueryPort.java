@@ -1,24 +1,27 @@
 package com.recommend.application.port.required;
 
-import com.recommend.application.dto.CourseMetaData;
+import com.lxp.recommend.application.dto.CourseMetaData;
+import com.lxp.recommend.infrastructure.external.course.dto.CourseMetaResponse;
 
 import java.util.List;
 import java.util.Set;
 
+/**
+ * 강좌 메타 정보 조회 Port
+ *
+ * 추천 계산에 필요한 강좌 정보만 조회
+ * (섹션/강의 구조는 불필요)
+ */
 public interface CourseMetaQueryPort {
 
     /**
-     * 공개된 모든 강좌 조회
-     */
-    List<CourseMetaData> findAll();
-
-    /**
-     * 특정 난이도의 강좌 조회
+     * 난이도별 강좌 조회
+     *
+     * @param targetDifficulties 타겟 난이도 목록 (예: JUNIOR, MIDDLE)
+     * @param limit 최대 조회 개수
+     * @return 강좌 메타 데이터 리스트
      */
     List<CourseMetaData> findByDifficulties(Set<String> targetDifficulties, int limit);
 
-    /**
-     * 강좌 ID 목록으로 조회
-     */
-    List<CourseMetaData> findByCourses(List<Long> courseIds);  // ✅ 메서드명 유지, 타입만 Long
+    List<CourseMetaResponse> findByCourses(List<String> courseIds);
 }

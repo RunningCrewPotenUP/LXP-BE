@@ -5,8 +5,6 @@ import org.springframework.batch.item.Chunk;
 import org.springframework.batch.item.ItemWriter;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-
 /**
  * 추천 계산 완료 확인 Writer
  * Processor에서 이미 추천 계산 및 저장이 완료되었으므로
@@ -14,27 +12,20 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class RecommendationWriter implements ItemWriter<Long> {  // ✅ String → Long 변경
+public class RecommendationWriter implements ItemWriter<String> {
 
     /**
      * Chunk 단위로 처리 완료된 학습자 ID 로깅
      *
-     * @param chunk 처리 완료된 학습자 ID 목록 (Chunk 크기만큼, Long 타입)
+     * @param chunk 처리 완료된 학습자 ID 목록 (Chunk 크기만큼)
      */
     @Override
-    public void write(Chunk<? extends Long> chunk) throws Exception {  // ✅ String → Long 변경
+    public void write(Chunk<? extends String> chunk) {
         if (chunk.isEmpty()) {
             return;
         }
 
-        List<? extends Long> items = chunk.getItems();
-
         log.info("[Batch Writer] Successfully processed {} learners: {}",
-                chunk.size(), items);
-
-        // 개별 학습자 ID 상세 로깅 (선택 사항)
-        items.forEach(learnerId ->
-                log.debug("[Batch Writer] Completed recommendation for learnerId={}", learnerId)
-        );
+                chunk.size(), chunk.getItems());
     }
 }

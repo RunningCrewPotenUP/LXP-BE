@@ -1,6 +1,6 @@
 package com.recommend.application.port.required;
 
-import com.recommend.application.dto.LearnerProfileData;
+import com.lxp.recommend.application.dto.LearnerProfileData;
 
 import java.util.Optional;
 
@@ -18,5 +18,5 @@ public interface LearnerProfileQueryPort {
      * @param learnerId 학습자 ID
      * @return 학습자 프로필 데이터 (없으면 Optional.empty)
      */
-    Optional<LearnerProfileData> getProfile(Long learnerId);  // ✅ String → Long
+    Optional<LearnerProfileData> getProfile(String learnerId);
 }

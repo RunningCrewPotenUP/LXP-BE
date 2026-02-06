@@ -1,8 +1,8 @@
 package com.recommend.domain.model;
 
-import com.recommend.domain.exception.InvalidRecommendContextException;
-import com.recommend.domain.model.ids.CourseId;
-import com.recommend.domain.model.ids.EnrollmentStatus;
+import com.lxp.recommend.domain.exception.InvalidRecommendContextException;
+import com.lxp.recommend.domain.model.ids.CourseId;
+import com.lxp.recommend.domain.model.ids.EnrollmentStatus;
 
 import java.util.List;
 import java.util.Set;
