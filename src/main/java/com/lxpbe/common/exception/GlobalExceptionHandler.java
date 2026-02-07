@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.InvalidNullException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.lxpbe.common.log.LogConstants;
+import com.lxpbe.common.response.ApiResponse;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolationException;
@@ -32,7 +33,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(DomainException.class)
-    public ResponseEntity<ErrorResponseBody> handleException(HttpServletRequest req, DomainException e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(HttpServletRequest req, DomainException e) {
 
         ErrorCode errorCode = e.errorCode();
         String errorMessage = errorCode.message();
@@ -44,7 +45,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<ErrorResponseBody> handleHttpRequestMethodNotSupportedException(
+    public ResponseEntity<ApiResponse<Void>> handleHttpRequestMethodNotSupportedException(
             HttpServletRequest req,
             HttpRequestMethodNotSupportedException e
     ) {
@@ -58,7 +59,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MissingRequestHeaderException.class)
-    public ResponseEntity<ErrorResponseBody> handleMissingRequestHeaderException(
+    public ResponseEntity<ApiResponse<Void>> handleMissingRequestHeaderException(
             HttpServletRequest req,
             MissingRequestHeaderException e
     ) {
@@ -71,7 +72,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(ServletException.class)
-    public ResponseEntity<ErrorResponseBody> handleServletException(HttpServletRequest req, ServletException e) {
+    public ResponseEntity<ApiResponse<Void>> handleServletException(HttpServletRequest req, ServletException e) {
 
         ErrorCode errorCode = CommonErrorCode.SERVLET_EXCEPTION;
         String errorMessage = errorCode.message() + ": " + e.getMessage();
@@ -83,7 +84,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponseBody> handleMethodArgumentNotValidException(
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentNotValidException(
             HttpServletRequest req,
             MethodArgumentNotValidException e
     ) {
@@ -100,7 +101,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(BindException.class)
-    public ResponseEntity<ErrorResponseBody> handleBindException(HttpServletRequest req, BindException e) {
+    public ResponseEntity<ApiResponse<Void>> handleBindException(HttpServletRequest req, BindException e) {
 
         ErrorCode errorCode = CommonErrorCode.INVALID_ARGUMENT_ERROR;
         String fieldErrorMessage = e.getFieldErrors()
@@ -118,7 +119,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<ErrorResponseBody> handleConstraintViolationException(
+    public ResponseEntity<ApiResponse<Void>> handleConstraintViolationException(
             HttpServletRequest req,
             ConstraintViolationException e
     ) {
@@ -139,7 +140,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(HandlerMethodValidationException.class)
-    public ResponseEntity<ErrorResponseBody> handleHandlerMethodValidationException(
+    public ResponseEntity<ApiResponse<Void>> handleHandlerMethodValidationException(
             HttpServletRequest req,
             HandlerMethodValidationException e
     ) {
@@ -164,7 +165,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponseBody> handleHttpMessageNotReadableException(
+    public ResponseEntity<ApiResponse<Void>> handleHttpMessageNotReadableException(
             HttpServletRequest req,
             HttpMessageNotReadableException e
     ) {
@@ -194,7 +195,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MissingServletRequestParameterException.class)
-    public ResponseEntity<ErrorResponseBody> handleMissingServletRequestParameterException(
+    public ResponseEntity<ApiResponse<Void>> handleMissingServletRequestParameterException(
             HttpServletRequest req,
             MissingServletRequestParameterException e
     ) {
@@ -208,7 +209,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ResponseEntity<ErrorResponseBody> handleMethodArgumentTypeMismatchException(
+    public ResponseEntity<ApiResponse<Void>> handleMethodArgumentTypeMismatchException(
             HttpServletRequest req,
             MethodArgumentTypeMismatchException e
     ) {
@@ -226,7 +227,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(DataAccessException.class)
-    public ResponseEntity<ErrorResponseBody> handleDataAccessException(HttpServletRequest req, DataAccessException e) {
+    public ResponseEntity<ApiResponse<Void>> handleDataAccessException(HttpServletRequest req, DataAccessException e) {
 
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_DATABASE_ERROR;
         String errorMessage = errorCode.message() + ": " + e.getMessage();
@@ -238,7 +239,7 @@ public class GlobalExceptionHandler {
 
     @ResponseBody
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<ErrorResponseBody> handleException(HttpServletRequest req, Exception e) {
+    public ResponseEntity<ApiResponse<Void>> handleException(HttpServletRequest req, Exception e) {
 
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_SERVER_ERROR;
         String errorMessage = errorCode.message() + ": " + e.getMessage();
@@ -248,12 +249,13 @@ public class GlobalExceptionHandler {
 
     // ----- helpers
 
-    private ResponseEntity<ErrorResponseBody> setAttributeAndGetResponseEntity(
+    private ResponseEntity<ApiResponse<Void>> setAttributeAndGetResponseEntity(
             HttpServletRequest req, Exception e, ErrorCode errorCode, String errorMessage) {
 
         setAttributeForLogging(req, e, errorCode, errorMessage);
 
-        ErrorResponseBody body = new ErrorResponseBody(errorCode.code(), errorMessage);
+        ErrorBody errorBody = new ErrorBody(errorCode.code(), errorMessage);
+        ApiResponse<Void> body = new ApiResponse(null, errorBody);
         return ResponseEntity.status(errorCode.httpStatus()).body(body);
     }
 
