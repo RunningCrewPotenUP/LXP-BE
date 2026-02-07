@@ -230,9 +230,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleDataAccessException(HttpServletRequest req, DataAccessException e) {
 
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_DATABASE_ERROR;
-        String errorMessage = errorCode.message() + ": " + e.getMessage();
+        String errorMessage = errorCode.message();
 
-        return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage);
+        return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage + ": " + e.getMessage());
     }
 
     // ----- uncaught exception handler
@@ -242,9 +242,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ApiResponse<Void>> handleException(HttpServletRequest req, Exception e) {
 
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_SERVER_ERROR;
-        String errorMessage = errorCode.message() + ": " + e.getMessage();
+        String errorMessage = errorCode.message();
 
-        return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage);
+        return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage + ": " + e.getMessage());
     }
 
     // ----- helpers
