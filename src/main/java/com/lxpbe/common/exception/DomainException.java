@@ -15,12 +15,12 @@ public class DomainException extends RuntimeException {
     }
 
     public DomainException(ErrorCode errorCode, Throwable cause) {
-        super(errorCode.message());
+        super(errorCode.message(), cause);
         this.errorCode = errorCode;
     }
 
     public DomainException(ErrorCode errorCode, String additionalInfo, Throwable cause) {
-        super(errorCode.message() + ", " + additionalInfo);
+        super(errorCode.message() + ", " + additionalInfo, cause);
         this.errorCode = errorCode;
     }
 
