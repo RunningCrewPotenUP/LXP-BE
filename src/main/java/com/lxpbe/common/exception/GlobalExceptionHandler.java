@@ -250,9 +250,9 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_DATABASE_ERROR;
         String errorMessage = errorCode.message();
 
-        setAttributeForLogging(req, e, errorCode, errorMessage);
+        setAttributeForLogging(req, e, errorCode, errorMessage + ": " + e.getMessage());
 
-        ErrorBody errorBody = new ErrorBody(errorCode.code(), errorMessage + ": " + e.getMessage());
+        ErrorBody errorBody = new ErrorBody(errorCode.code(), errorMessage);
         ApiResponse<Void> body = new ApiResponse(null, errorBody);
         return ResponseEntity.status(errorCode.httpStatus()).body(body);
     }
@@ -266,9 +266,9 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = CommonErrorCode.UNEXPECTED_SERVER_ERROR;
         String errorMessage = errorCode.message();
 
-        setAttributeForLogging(req, e, errorCode, errorMessage);
+        setAttributeForLogging(req, e, errorCode, errorMessage + ": " + e.getMessage());
 
-        ErrorBody errorBody = new ErrorBody(errorCode.code(), errorMessage + ": " + e.getMessage());
+        ErrorBody errorBody = new ErrorBody(errorCode.code(), errorMessage);
         ApiResponse<Void> body = new ApiResponse(null, errorBody);
         return ResponseEntity.status(errorCode.httpStatus()).body(body);
     }
