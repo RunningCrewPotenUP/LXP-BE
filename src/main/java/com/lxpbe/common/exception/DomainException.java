@@ -9,18 +9,8 @@ public class DomainException extends RuntimeException {
         this.errorCode = errorCode;
     }
 
-    public DomainException(ErrorCode errorCode, String additionalInfo) {
-        super(errorCode.message() + ", " + additionalInfo);
-        this.errorCode = errorCode;
-    }
-
     public DomainException(ErrorCode errorCode, Throwable cause) {
         super(errorCode.message(), cause);
-        this.errorCode = errorCode;
-    }
-
-    public DomainException(ErrorCode errorCode, String additionalInfo, Throwable cause) {
-        super(errorCode.message() + ", " + additionalInfo, cause);
         this.errorCode = errorCode;
     }
 
