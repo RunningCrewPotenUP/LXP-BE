@@ -217,8 +217,10 @@ public class GlobalExceptionHandler {
         ErrorCode errorCode = CommonErrorCode.INVALID_ARGUMENT_ERROR;
         String errorMessage = errorCode.message()
                 + "(name: " + e.getParameter().getParameterName()
-                + ", required: " + e.getRequiredType()
-                + ", given: " + e.getParameter().getParameterType() + ")";
+                + ", required type: " + e.getRequiredType()
+                + ", given type: " + e.getParameter().getParameterType()
+                + ", given value: " + e.getValue()
+                + ")";
 
         return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage);
     }
