@@ -30,16 +30,16 @@ public enum CommonErrorCode implements ErrorCode {
 
     @Override
     public HttpStatus httpStatus() {
-        return null;
+        return httpStatus;
     }
 
     @Override
     public String code() {
-        return "";
+        return code;
     }
 
     @Override
     public String message() {
-        return "";
+        return message;
     }
 }
