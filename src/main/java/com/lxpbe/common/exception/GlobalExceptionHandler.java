@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.HandlerMethodValidationException;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -66,6 +67,21 @@ public class GlobalExceptionHandler {
 
         ErrorCode errorCode = CommonErrorCode.MISSING_HTTP_HEADER;
         String errorMessage = errorCode.message() + "(missing: " + e.getHeaderName() + ")";
+
+        return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage);
+    }
+
+    // ----- servlet exceptions
+
+    @ResponseBody
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ApiResponse<Void>> handleNoResourceFoundException(
+            HttpServletRequest req,
+            NoResourceFoundException e)
+    {
+
+        ErrorCode errorCode = CommonErrorCode.NO_STATIC_RESOURCE;
+        String errorMessage = errorCode.message() + ": " + e.getMessage();
 
         return setAttributeAndGetResponseEntity(req, e, errorCode, errorMessage);
     }
