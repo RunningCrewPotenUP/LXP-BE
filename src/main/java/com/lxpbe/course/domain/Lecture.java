@@ -1,0 +1,42 @@
+package com.lxpbe.course.domain;
+
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Table(name = "lecture")
+@Entity
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Lecture {
+    @Column(nullable = false)
+    @Getter
+    private String title;
+
+    @Getter
+    private Long durationSeconds;
+
+    @Getter
+    @Column(name = "sort_order")
+    private int order;
+
+    @Getter
+    private String videoUrl;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "section_id", nullable = false)
+    private Section section;
+
+    @Builder
+    public Lecture(String title, Long duration, int order, String videoUrl) {
+        this.title = title;
+        this.durationSeconds = duration;
+        this.order = order;
+        this.videoUrl = videoUrl;
+    }
+
+    public void assignSection(Section section) {
+        this.section = section;
+    }
+}
