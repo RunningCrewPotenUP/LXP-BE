@@ -1,12 +1,14 @@
 package com.lxpbe.course.dto;
 
+import com.lxpbe.course.domain.enums.Level;
+
 import java.util.List;
 
 public record UpdateCourseRequest(
         String title,
         String description,
         String thumbnailUrl,
-        String level,
+        Level level,
         List<Long> tags,
         List<UpdateSectionRequest> sections
 ) {

@@ -54,32 +54,29 @@ public class CourseService {
 
     @Transactional
     public CourseDetailResponse createCourse(CreateCourseRequest request, Long instructorId) {
-        Level level = Level.fromString(request.level())
-                .orElseThrow(() -> new DomainException(CourseErrorCode.INVALID_LEVEL));
-
         Course course = Course.builder()
                 .instructorId(instructorId)
                 .title(request.title())
                 .description(request.description())
                 .thumbnailUrl(request.thumbnailUrl())
-                .difficulty(level)
+                .difficulty(request.level())
                 .tags(request.tags())
                 .build();
 
         if (request.sections() != null) {
             AtomicInteger sectionOrder = new AtomicInteger(1);
-            request.sections().forEach(sectionReq -> {
+            request.sections().forEach(sectionRequest -> {
                 Section section = Section.builder()
-                        .title(sectionReq.title())
+                        .title(sectionRequest.title())
                         .order(sectionOrder.getAndIncrement())
                         .build();
 
-                if (sectionReq.lectures() != null) {
+                if (sectionRequest.lectures() != null) {
                     AtomicInteger lectureOrder = new AtomicInteger(1);
-                    sectionReq.lectures().forEach(lectureReq -> {
+                    sectionRequest.lectures().forEach(lectureRequest -> {
                         Lecture lecture = Lecture.builder()
-                                .title(lectureReq.title())
-                                .videoUrl(lectureReq.videoUrl())
+                                .title(lectureRequest.title())
+                                .videoUrl(lectureRequest.videoUrl())
                                 .order(lectureOrder.getAndIncrement())
                                 .build();
                         section.addLecture(lecture);
@@ -103,13 +100,7 @@ public class CourseService {
         Course course = courseRepository.findByIdWithSectionsAndLectures(courseId)
                 .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
 
-        Level level = null;
-        if (request.level() != null) {
-            level = Level.fromString(request.level())
-                    .orElseThrow(() -> new DomainException(CourseErrorCode.INVALID_LEVEL));
-        }
-
-        course.updateBasicInfo(request.title(), request.description(), request.thumbnailUrl(), level);
+        course.updateBasicInfo(request.title(), request.description(), request.thumbnailUrl(), request.level());
 
         if (request.tags() != null) {
             course.updateTags(request.tags());

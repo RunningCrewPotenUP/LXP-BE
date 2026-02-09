@@ -1,5 +1,6 @@
 package com.lxpbe.course.dto;
 
+import com.lxpbe.course.domain.enums.Level;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +13,7 @@ public record CreateCourseRequest(
         String description,
         String thumbnailUrl,
         @NotNull(message = "난이도는 필수입니다")
-        String level,
+        Level level,
         List<Long> tags,
         @Valid
         List<CreateSectionRequest> sections
