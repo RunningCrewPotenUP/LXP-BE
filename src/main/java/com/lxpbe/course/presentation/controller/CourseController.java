@@ -1,6 +1,7 @@
 package com.lxpbe.course.presentation.controller;
 
 import com.lxpbe.common.response.ApiResponse;
+import com.lxpbe.course.application.command.CourseCreateCommand;
 import com.lxpbe.course.presentation.response.CourseDetailResponse;
 import com.lxpbe.course.presentation.response.CourseListResponse;
 import com.lxpbe.course.presentation.request.CreateCourseRequest;
@@ -43,7 +44,7 @@ public class CourseController {
             @Valid @RequestBody CreateCourseRequest request,
             @RequestHeader(value = "X-User-Id", defaultValue = "1") Long instructorId
     ) {
-        CourseDetailResponse result = courseService.createCourse(request, instructorId);
+        CourseDetailResponse result = courseService.createCourse(CourseCreateCommand.of(instructorId, request));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(result, null));
     }

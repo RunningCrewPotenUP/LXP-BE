@@ -1,14 +1,19 @@
 package com.lxpbe.course.domain;
 
+import com.lxpbe.course.application.command.LectureUpdateCommand;
+import com.lxpbe.course.application.command.SectionCreateCommand;
+import com.lxpbe.course.application.command.SectionUpdateCommand;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.BatchSize;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 @Table(name = "section")
 @Entity
@@ -37,10 +42,64 @@ public class Section {
     @BatchSize(size = 10)
     private List<Lecture> lectures = new ArrayList<>();
 
-    @Builder
-    public Section(String title, int order) {
+    private Section(String title, int order) {
         this.title = title;
         this.order = order;
+    }
+
+    public static Section create(SectionCreateCommand command, int order) {
+        Section section = new Section(command.title(), order);
+        if (command.lectures() != null) {
+            AtomicInteger lectureOrder = new AtomicInteger(1);
+            command.lectures().forEach(lectureCommand -> {
+                Lecture lecture = Lecture.create(lectureCommand, lectureOrder.getAndIncrement());
+                section.addLecture(lecture);
+            });
+        }
+        return section;
+    }
+
+    public static Section create(SectionUpdateCommand command, int order) {
+        Section section = new Section(command.title(), order);
+        if (command.lectures() != null) {
+            AtomicInteger lectureOrder = new AtomicInteger(1);
+            command.lectures().forEach(lectureCommand -> {
+                Lecture lecture = Lecture.create(lectureCommand, lectureOrder.getAndIncrement());
+                section.addLecture(lecture);
+            });
+        }
+        return section;
+    }
+
+    public void update(SectionUpdateCommand command) {
+        if (command.title() != null) {
+            this.title = command.title();
+        }
+
+        if (command.lectures() != null) {
+            Set<Long> commandLectureIds = command.lectures().stream()
+                    .map(LectureUpdateCommand::id)
+                    .filter(id -> id != null)
+                    .collect(Collectors.toSet());
+
+            this.lectures.removeIf(lecture -> !commandLectureIds.contains(lecture.getId()));
+
+            AtomicInteger lectureOrder = new AtomicInteger(1);
+            command.lectures().forEach(lectureCommand -> {
+                if (lectureCommand.id() != null) {
+                    this.lectures.stream()
+                            .filter(lecture -> lecture.getId().equals(lectureCommand.id()))
+                            .findFirst()
+                            .ifPresent(lecture -> {
+                                lecture.update(lectureCommand);
+                                lecture.updateOrder(lectureOrder.getAndIncrement());
+                            });
+                } else {
+                    Lecture newLecture = Lecture.create(lectureCommand, lectureOrder.getAndIncrement());
+                    this.addLecture(newLecture);
+                }
+            });
+        }
     }
 
     public void assignCourse(Course course) {

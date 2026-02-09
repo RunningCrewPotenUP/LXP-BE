@@ -1,5 +1,7 @@
 package com.lxpbe.course.domain;
 
+import com.lxpbe.course.application.command.LectureCreateCommand;
+import com.lxpbe.course.application.command.LectureUpdateCommand;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,29 +35,35 @@ public class Lecture {
     @JoinColumn(name = "section_id", nullable = false)
     private Section section;
 
-    @Builder
-    public Lecture(String title, Long durationSeconds, int order, String videoUrl) {
+    private Lecture(String title, Long durationSeconds, int order, String videoUrl) {
         this.title = title;
         this.durationSeconds = durationSeconds;
         this.order = order;
         this.videoUrl = videoUrl;
     }
 
+    public static Lecture create(LectureCreateCommand command, int order) {
+        return new Lecture(command.title(), command.durationSeconds(), order, command.videoUrl());
+    }
+
+    public static Lecture create(LectureUpdateCommand command, int order) {
+        return new Lecture(command.title(), command.durationSeconds(), order, command.videoUrl());
+    }
+
     public void assignSection(Section section) {
         this.section = section;
     }
 
-    public void updateInfo(String title, String videoUrl) {
-        if (title != null) {
-            this.title = title;
+    public void update(LectureUpdateCommand command) {
+        if (command.title() != null) {
+            this.title = command.title();
         }
-        if (videoUrl != null) {
-            this.videoUrl = videoUrl;
+        if (command.videoUrl() != null) {
+            this.videoUrl = command.videoUrl();
         }
-    }
-
-    public void updateDuration(Long durationSeconds) {
-        this.durationSeconds = durationSeconds;
+        if (command.durationSeconds() != null) {
+            this.durationSeconds = command.durationSeconds();
+        }
     }
 
     public void updateOrder(int order) {

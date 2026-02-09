@@ -1,6 +1,8 @@
 package com.lxpbe.course.application.service;
 
 import com.lxpbe.common.exception.DomainException;
+import com.lxpbe.course.application.command.CourseCreateCommand;
+import com.lxpbe.course.application.command.CourseUpdateCommand;
 import com.lxpbe.course.domain.Course;
 import com.lxpbe.course.domain.Lecture;
 import com.lxpbe.course.domain.Section;
@@ -55,37 +57,13 @@ public class CourseService {
     }
 
     @Transactional
-    public CourseDetailResponse createCourse(CreateCourseRequest request, Long instructorId) {
-        Course course =  Course.create(instructorId, request.title(), request.description(), request.thumbnailUrl(), request.level(), request.tags());
+    public CourseDetailResponse createCourse(CourseCreateCommand command) {
+        InstructorResult instructor = userPort.findInstructorById(command.instructorId())
+                .orElse(InstructorResult.unknown(command.instructorId()));
+        List<TagResult> tags = tagPort.findTagsByIds(command.tags());
 
-        if (request.sections() != null) {
-            AtomicInteger sectionOrder = new AtomicInteger(1);
-            request.sections().forEach(sectionRequest -> {
-                Section section = Section.builder()
-                        .title(sectionRequest.title())
-                        .order(sectionOrder.getAndIncrement())
-                        .build();
-
-                if (sectionRequest.lectures() != null) {
-                    AtomicInteger lectureOrder = new AtomicInteger(1);
-                    sectionRequest.lectures().forEach(lectureRequest -> {
-                        Lecture lecture = Lecture.builder()
-                                .title(lectureRequest.title())
-                                .videoUrl(lectureRequest.videoUrl())
-                                .order(lectureOrder.getAndIncrement())
-                                .build();
-                        section.addLecture(lecture);
-                    });
-                }
-                course.addSection(section);
-            });
-        }
-
+        Course course =  Course.create(command);
         Course savedCourse = courseRepository.save(course);
-
-        InstructorResult instructor = userPort.findInstructorById(savedCourse.getInstructorId())
-                .orElse(InstructorResult.unknown(savedCourse.getInstructorId()));
-        List<TagResult> tags = tagPort.findTagsByIds(savedCourse.getTags());
 
         return CourseDetailResponse.of(savedCourse, instructor, tags);
     }
@@ -95,35 +73,7 @@ public class CourseService {
         Course course = courseRepository.findByIdWithSectionsAndLectures(courseId)
                 .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
 
-        course.updateBasicInfo(request.title(), request.description(), request.thumbnailUrl(), request.level());
-
-        if (request.tags() != null) {
-            course.updateTags(request.tags());
-        }
-
-        if (request.sections() != null) {
-            course.clearSections();
-            AtomicInteger sectionOrder = new AtomicInteger(1);
-            request.sections().forEach(sectionReq -> {
-                Section section = Section.builder()
-                        .title(sectionReq.title())
-                        .order(sectionOrder.getAndIncrement())
-                        .build();
-
-                if (sectionReq.lectures() != null) {
-                    AtomicInteger lectureOrder = new AtomicInteger(1);
-                    sectionReq.lectures().forEach(lectureReq -> {
-                        Lecture lecture = Lecture.builder()
-                                .title(lectureReq.title())
-                                .videoUrl(lectureReq.videoUrl())
-                                .order(lectureOrder.getAndIncrement())
-                                .build();
-                        section.addLecture(lecture);
-                    });
-                }
-                course.addSection(section);
-            });
-        }
+        course.update(CourseUpdateCommand.of(courseId, request));
 
         InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
                 .orElse(InstructorResult.unknown(course.getInstructorId()));
