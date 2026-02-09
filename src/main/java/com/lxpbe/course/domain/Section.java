@@ -33,6 +33,7 @@ public class Section {
     @Getter
     @OneToMany(mappedBy = "section", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("order ASC")
+    @org.hibernate.annotations.BatchSize(size = 10)
     private List<Lecture> lectures = new ArrayList<>();
 
     @Builder

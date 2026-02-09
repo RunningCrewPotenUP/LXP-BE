@@ -19,6 +19,6 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
     """)
     Page<Course> searchByKeyword(@Param("keyword") String keyword, Pageable pageable);
 
-    @Query("SELECT c FROM Course c LEFT JOIN FETCH c.sections s LEFT JOIN FETCH s.lectures WHERE c.id = :id")
+    @Query("SELECT c FROM Course c LEFT JOIN FETCH c.sections WHERE c.id = :id")
     Optional<Course> findByIdWithSectionsAndLectures(@Param("id") Long id);
 }

@@ -56,6 +56,7 @@ public class Course {
     @Getter
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("order ASC")
+    @org.hibernate.annotations.BatchSize(size = 100)
     private List<Section> sections = new ArrayList<>();
 
     @Getter
