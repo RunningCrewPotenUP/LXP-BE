@@ -6,6 +6,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.BatchSize;
 
 import java.time.Instant;
 import java.util.ArrayList;
@@ -56,7 +57,7 @@ public class Course {
     @Getter
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
     @OrderBy("order ASC")
-    @org.hibernate.annotations.BatchSize(size = 100)
+    @BatchSize(size = 10)
     private List<Section> sections = new ArrayList<>();
 
     @Getter
