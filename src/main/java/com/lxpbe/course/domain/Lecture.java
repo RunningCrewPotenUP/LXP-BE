@@ -34,14 +34,31 @@ public class Lecture {
     private Section section;
 
     @Builder
-    public Lecture(String title, Long duration, int order, String videoUrl) {
+    public Lecture(String title, Long durationSeconds, int order, String videoUrl) {
         this.title = title;
-        this.durationSeconds = duration;
+        this.durationSeconds = durationSeconds;
         this.order = order;
         this.videoUrl = videoUrl;
     }
 
     public void assignSection(Section section) {
         this.section = section;
+    }
+
+    public void updateInfo(String title, String videoUrl) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (videoUrl != null) {
+            this.videoUrl = videoUrl;
+        }
+    }
+
+    public void updateDuration(Long durationSeconds) {
+        this.durationSeconds = durationSeconds;
+    }
+
+    public void updateOrder(int order) {
+        this.order = order;
     }
 }

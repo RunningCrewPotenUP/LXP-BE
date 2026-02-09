@@ -36,7 +36,7 @@ public class Section {
     private List<Lecture> lectures = new ArrayList<>();
 
     @Builder
-    public Section(String uuid, String title, int order) {
+    public Section(String title, int order) {
         this.title = title;
         this.order = order;
     }
@@ -48,5 +48,21 @@ public class Section {
     public void addLecture(Lecture lecture) {
         this.lectures.add(lecture);
         lecture.assignSection(this);
+    }
+
+    public void updateTitle(String title) {
+        if (title != null) {
+            this.title = title;
+        }
+    }
+
+    public void updateOrder(int order) {
+        this.order = order;
+    }
+
+    public int getTotalDurationSeconds() {
+        return this.lectures.stream()
+                .mapToInt(lecture -> lecture.getDurationSeconds() != null ? lecture.getDurationSeconds().intValue() : 0)
+                .sum();
     }
 }

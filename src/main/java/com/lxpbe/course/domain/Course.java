@@ -89,4 +89,41 @@ public class Course {
         this.sections.add(section);
         section.assignCourse(this);
     }
+
+    public void updateBasicInfo(String title, String description, String thumbnailUrl, Level difficulty) {
+        if (title != null) {
+            this.title = title;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+        if (thumbnailUrl != null) {
+            this.thumbnailUrl = thumbnailUrl;
+        }
+        if (difficulty != null) {
+            this.difficulty = difficulty;
+        }
+    }
+
+    public void updateTags(List<Long> tags) {
+        this.tags.clear();
+        if (tags != null) {
+            this.tags.addAll(tags);
+        }
+    }
+
+    public void clearSections() {
+        this.sections.clear();
+    }
+
+    public int getTotalDurationSeconds() {
+        return this.sections.stream()
+                .mapToInt(Section::getTotalDurationSeconds)
+                .sum();
+    }
+
+    public int getTotalDurationHours() {
+        int totalSeconds = getTotalDurationSeconds();
+        return (int) Math.ceil(totalSeconds / 3600.0);
+    }
 }
