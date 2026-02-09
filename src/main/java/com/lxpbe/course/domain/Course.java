@@ -7,22 +7,41 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-@Table(name = "course",  indexes = {
-        @Index(name = "idx_course_uuid", columnList = "uuid")
-})
+@Table(name = "course")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Getter
     private Long id;
 
     @Getter
     @Column(name = "instructor_id", nullable = false)
     private Long instructorId;
+
+    @Getter
+    @Column(nullable = false, updatable = false)
+    private Instant createdAt;
+
+    @Getter
+    @Column(nullable = false)
+    private Instant updatedAt;
+
+    @PrePersist
+    protected void onCreate() {
+        createdAt = Instant.now();
+        updatedAt = Instant.now();
+    }
+
+    @PreUpdate
+    protected void onUpdate() {
+        updatedAt = Instant.now();
+    }
 
     @Getter
     @Column(nullable = false)
