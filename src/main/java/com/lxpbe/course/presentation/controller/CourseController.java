@@ -1,11 +1,11 @@
-package com.lxpbe.course.controller;
+package com.lxpbe.course.presentation.controller;
 
 import com.lxpbe.common.response.ApiResponse;
-import com.lxpbe.course.dto.CourseDetailResponse;
-import com.lxpbe.course.dto.CourseListResponse;
-import com.lxpbe.course.dto.CreateCourseRequest;
-import com.lxpbe.course.dto.UpdateCourseRequest;
-import com.lxpbe.course.service.CourseService;
+import com.lxpbe.course.presentation.response.CourseDetailResponse;
+import com.lxpbe.course.presentation.response.CourseListResponse;
+import com.lxpbe.course.presentation.request.CreateCourseRequest;
+import com.lxpbe.course.presentation.request.UpdateCourseRequest;
+import com.lxpbe.course.application.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

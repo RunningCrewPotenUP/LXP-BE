@@ -1,4 +1,4 @@
-package com.lxpbe.course.repository;
+package com.lxpbe.course.infrastructure.repository;
 
 import com.lxpbe.course.domain.Course;
 import org.springframework.data.domain.Page;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
 
-public interface CourseRepository extends JpaRepository<Course, Long> {
+public interface CourseJpaRepository extends JpaRepository<Course, Long> {
 
     @Query("""
         SELECT c FROM Course c

@@ -1,17 +1,19 @@
-package com.lxpbe.course.service;
+package com.lxpbe.course.application.service;
 
 import com.lxpbe.common.exception.DomainException;
 import com.lxpbe.course.domain.Course;
 import com.lxpbe.course.domain.Lecture;
 import com.lxpbe.course.domain.Section;
-import com.lxpbe.course.domain.enums.Level;
-import com.lxpbe.course.dto.*;
-import com.lxpbe.course.exception.CourseErrorCode;
-import com.lxpbe.course.port.InstructorInfo;
-import com.lxpbe.course.port.TagInfo;
-import com.lxpbe.course.port.TagPort;
-import com.lxpbe.course.port.UserPort;
-import com.lxpbe.course.repository.CourseRepository;
+import com.lxpbe.course.domain.exception.CourseErrorCode;
+import com.lxpbe.course.application.port.InstructorResult;
+import com.lxpbe.course.application.port.TagResult;
+import com.lxpbe.course.application.port.TagPort;
+import com.lxpbe.course.application.port.UserPort;
+import com.lxpbe.course.infrastructure.repository.CourseJpaRepository;
+import com.lxpbe.course.presentation.response.CourseDetailResponse;
+import com.lxpbe.course.presentation.response.CourseListResponse;
+import com.lxpbe.course.presentation.request.CreateCourseRequest;
+import com.lxpbe.course.presentation.request.UpdateCourseRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -26,7 +28,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 @Transactional(readOnly = true)
 public class CourseService {
 
-    private final CourseRepository courseRepository;
+    private final CourseJpaRepository courseRepository;
     private final UserPort userPort;
     private final TagPort tagPort;
 
@@ -34,9 +36,9 @@ public class CourseService {
         Page<Course> courses = courseRepository.searchByKeyword(keyword, pageable);
 
         return courses.map(course -> {
-            InstructorInfo instructor = userPort.findInstructorById(course.getInstructorId())
-                    .orElse(InstructorInfo.unknown(course.getInstructorId()));
-            List<TagInfo> tags = tagPort.findTagsByIds(course.getTags());
+            InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
+                    .orElse(InstructorResult.unknown(course.getInstructorId()));
+            List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
             return CourseListResponse.of(course, instructor, tags);
         });
     }
@@ -45,23 +47,16 @@ public class CourseService {
         Course course = courseRepository.findByIdWithSectionsAndLectures(courseId)
                 .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
 
-        InstructorInfo instructor = userPort.findInstructorById(course.getInstructorId())
-                .orElse(InstructorInfo.unknown(course.getInstructorId()));
-        List<TagInfo> tags = tagPort.findTagsByIds(course.getTags());
+        InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
+                .orElse(InstructorResult.unknown(course.getInstructorId()));
+        List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
 
         return CourseDetailResponse.of(course, instructor, tags);
     }
 
     @Transactional
     public CourseDetailResponse createCourse(CreateCourseRequest request, Long instructorId) {
-        Course course = Course.builder()
-                .instructorId(instructorId)
-                .title(request.title())
-                .description(request.description())
-                .thumbnailUrl(request.thumbnailUrl())
-                .difficulty(request.level())
-                .tags(request.tags())
-                .build();
+        Course course =  Course.create(instructorId, request.title(), request.description(), request.thumbnailUrl(), request.level(), request.tags());
 
         if (request.sections() != null) {
             AtomicInteger sectionOrder = new AtomicInteger(1);
@@ -88,9 +83,9 @@ public class CourseService {
 
         Course savedCourse = courseRepository.save(course);
 
-        InstructorInfo instructor = userPort.findInstructorById(savedCourse.getInstructorId())
-                .orElse(InstructorInfo.unknown(savedCourse.getInstructorId()));
-        List<TagInfo> tags = tagPort.findTagsByIds(savedCourse.getTags());
+        InstructorResult instructor = userPort.findInstructorById(savedCourse.getInstructorId())
+                .orElse(InstructorResult.unknown(savedCourse.getInstructorId()));
+        List<TagResult> tags = tagPort.findTagsByIds(savedCourse.getTags());
 
         return CourseDetailResponse.of(savedCourse, instructor, tags);
     }
@@ -130,9 +125,9 @@ public class CourseService {
             });
         }
 
-        InstructorInfo instructor = userPort.findInstructorById(course.getInstructorId())
-                .orElse(InstructorInfo.unknown(course.getInstructorId()));
-        List<TagInfo> tags = tagPort.findTagsByIds(course.getTags());
+        InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
+                .orElse(InstructorResult.unknown(course.getInstructorId()));
+        List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
 
         return CourseDetailResponse.of(course, instructor, tags);
     }

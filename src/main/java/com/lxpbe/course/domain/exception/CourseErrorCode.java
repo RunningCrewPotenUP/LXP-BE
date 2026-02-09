@@ -1,4 +1,4 @@
-package com.lxpbe.course.exception;
+package com.lxpbe.course.domain.exception;
 
 import com.lxpbe.common.exception.ErrorCode;
 import org.springframework.http.HttpStatus;

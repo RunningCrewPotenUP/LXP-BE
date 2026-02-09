@@ -1,4 +1,4 @@
-package com.lxpbe.course.dto;
+package com.lxpbe.course.application.dto;
 
 import com.lxpbe.course.domain.enums.Level;
 

@@ -1,4 +1,4 @@
-package com.lxpbe.course.dto;
+package com.lxpbe.course.presentation.request;
 
 public record UpdateLectureRequest(
         Long id,

@@ -1,4 +1,4 @@
-package com.lxpbe.course.dto;
+package com.lxpbe.course.presentation.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;

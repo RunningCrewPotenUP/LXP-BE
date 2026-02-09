@@ -1,4 +1,4 @@
-package com.lxpbe.course.dto;
+package com.lxpbe.course.presentation.request;
 
 import java.util.List;
 

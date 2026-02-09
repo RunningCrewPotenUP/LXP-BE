@@ -75,8 +75,7 @@ public class Course {
     @OrderColumn(name = "tag_order")
     private List<Long> tags = new ArrayList<>();
 
-    @Builder
-    public Course(Long instructorId, String title,
+    private Course(Long instructorId, String title,
                            String description, String thumbnailUrl,
                            Level difficulty, List<Long> tags) {
         this.instructorId = instructorId;
@@ -85,6 +84,17 @@ public class Course {
         this.thumbnailUrl = thumbnailUrl;
         this.difficulty = difficulty;
         this.tags = tags != null ? tags : new ArrayList<>();
+    }
+
+    public static Course create(
+            Long instructorId,
+            String title,
+            String description,
+            String thumbnailUrl,
+            Level difficulty,
+            List<Long> tags
+    ) {
+        return new Course(instructorId, title, description, thumbnailUrl, difficulty, tags);
     }
 
     public void addSection(Section section) {

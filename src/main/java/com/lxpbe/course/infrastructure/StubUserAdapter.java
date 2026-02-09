@@ -1,7 +1,7 @@
-package com.lxpbe.course.infra;
+package com.lxpbe.course.infrastructure;
 
-import com.lxpbe.course.port.InstructorInfo;
-import com.lxpbe.course.port.UserPort;
+import com.lxpbe.course.application.port.InstructorResult;
+import com.lxpbe.course.application.port.UserPort;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -14,8 +14,8 @@ import java.util.Optional;
 public class StubUserAdapter implements UserPort {
 
     @Override
-    public Optional<InstructorInfo> findInstructorById(Long instructorId) {
+    public Optional<InstructorResult> findInstructorById(Long instructorId) {
         // TODO: User BC 구현 후 실제 조회 로직으로 교체
-        return Optional.of(new InstructorInfo(instructorId, "테스트 강사"));
+        return Optional.of(new InstructorResult(instructorId, "테스트 강사"));
     }
 }

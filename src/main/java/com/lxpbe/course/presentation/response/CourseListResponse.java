@@ -1,8 +1,9 @@
-package com.lxpbe.course.dto;
+package com.lxpbe.course.presentation.response;
 
+import com.lxpbe.course.application.dto.LevelDto;
 import com.lxpbe.course.domain.Course;
-import com.lxpbe.course.port.InstructorInfo;
-import com.lxpbe.course.port.TagInfo;
+import com.lxpbe.course.application.port.InstructorResult;
+import com.lxpbe.course.application.port.TagResult;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,12 +14,12 @@ public record CourseListResponse(
         String description,
         String thumbnailUrl,
         LevelDto level,
-        InstructorInfo instructor,
-        List<TagInfo> tags,
+        InstructorResult instructor,
+        List<TagResult> tags,
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static CourseListResponse of(Course course, InstructorInfo instructor, List<TagInfo> tags) {
+    public static CourseListResponse of(Course course, InstructorResult instructor, List<TagResult> tags) {
         return new CourseListResponse(
                 course.getId(),
                 course.getTitle(),
