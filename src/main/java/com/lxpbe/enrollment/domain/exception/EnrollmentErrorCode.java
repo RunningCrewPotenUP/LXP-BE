@@ -74,6 +74,11 @@ public enum EnrollmentErrorCode implements ErrorCode {
             "ENRL_0013",
             "사용자의 해당 강좌에 대한 취소되지 않은 수강 건이 이미 존재합니다."
     ),
+    ENROLLMENT_NOT_EXISTS(
+            HttpStatus.NOT_FOUND,
+            "ENRL_0014",
+            "수강을 찾을 수 없습니다."
+    ),
     ;
 
     // -----

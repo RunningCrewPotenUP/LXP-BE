@@ -2,11 +2,16 @@ package com.lxpbe.enrollment.presentation;
 
 import com.lxpbe.enrollment.application.EnrollmentCommandService;
 import com.lxpbe.enrollment.application.EnrollmentQueryService;
+import com.lxpbe.enrollment.application.command.EnrollmentCancelCommand;
+import com.lxpbe.enrollment.presentation.request.EnrollmentCancelRequest;
+import com.lxpbe.enrollment.presentation.response.EnrollmentCancelledResponse;
 import com.lxpbe.enrollment.presentation.response.EnrollmentCreatedResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,6 +45,22 @@ public class EnrollmentController {
         EnrollmentCreatedResponse response = enrollmentCommandService.enroll(userId, courseId);
         return ResponseEntity
                 .created(URI.create("/enrollments/" + response.id()))
+                .body(response);
+    }
+
+    // ----- 수강 취소
+
+    @PatchMapping
+    public ResponseEntity<EnrollmentCancelledResponse> cancelByUser(
+            @LoginUser
+            Long userId,
+            @RequestBody
+            EnrollmentCancelRequest request
+    ) {
+        EnrollmentCancelledResponse response
+                = enrollmentCommandService.cancelByUser(EnrollmentCancelCommand.of(userId, request));
+        return ResponseEntity
+                .ok()
                 .body(response);
     }
 }
