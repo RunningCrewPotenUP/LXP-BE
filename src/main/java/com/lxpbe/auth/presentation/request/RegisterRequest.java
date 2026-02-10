@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import java.util.List;
 
 public record RegisterRequest(
@@ -21,6 +22,7 @@ public record RegisterRequest(
         @NotNull(message = "역할은 비어있을 수 없습니다.")
         Role role,
         @NotNull(message = "태그는 비어있을 수 없습니다.")
+        @Size(min = 3, max = 5, message = "태그는 3개 이상 5개 이하로 입력해야 합니다.")
         List<Long> tagIds,
         @NotNull(message = "레벨은 비어있을 수 없습니다.")
         Level level

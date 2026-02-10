@@ -7,6 +7,7 @@ import com.lxpbe.auth.presentation.response.TokenResponse;
 import com.lxpbe.common.exception.DomainException;
 import com.lxpbe.common.security.JwtTokenProvider;
 import com.lxpbe.user.domain.User;
+import com.lxpbe.user.domain.exception.UserErrorCode;
 import com.lxpbe.user.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -51,7 +52,7 @@ public class AuthService {
 
     private void validateDuplicateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new DomainException(AuthErrorCode.DUPLICATE_EMAIL);
+            throw new DomainException(UserErrorCode.DUPLICATE_EMAIL);
         }
     }
 }

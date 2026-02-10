@@ -58,10 +58,6 @@ Content-Type: application/json
 ### 인증 필요 API - 토큰 없이 (401)
 GET http://localhost:8080/users/me
 
-### 인증 필요 API - 유효하지 않은 토큰 (401 AUTH-004)
+### 인증 필요 API - 유효하지 않은 토큰 (401)
 GET http://localhost:8080/users/me
 Authorization: Bearer invalid.token.here
-
-### 인증 필요 API - 만료된 토큰 (401 AUTH-004)
-GET http://localhost:8080/users/me
-Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiTEVBUk5FUiJdLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTcwMDAwMDAwMX0.expired
