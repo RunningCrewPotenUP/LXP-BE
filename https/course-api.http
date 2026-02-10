@@ -1,0 +1,523 @@
+### Course API Test
+### 사용법: 각 요청의 courseId, sectionId, lectureId를 실제 값으로 변경 후 테스트
+
+@baseUrl = http://localhost:8080
+@instructorId = 1
+@courseId = 1
+@sectionId = 1
+@lectureId = 1
+
+##################################################
+# 생성 API
+##################################################
+
+### 1. 강좌 생성 (섹션/강의 포함, durationSeconds 포함)
+
+POST {{baseUrl}}/courses
+Content-Type: application/json
+X-User-Id: {{instructorId}}
+
+{
+  "title": "Spring Boot 완전 정복",
+  "description": "Spring Boot를 활용한 백엔드 개발 마스터 과정",
+  "thumbnailUrl": "https://example.com/thumbnail.jpg",
+  "level": "JUNIOR",
+  "tags": [1, 2, 3, 4],
+  "sections": [
+    {
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        },
+        {
+          "title": "강의 2: 프로젝트 생성하기",
+          "videoUrl": "https://video.url/2",
+          "durationSeconds": 900
+        }
+      ]
+    },
+    {
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        },
+        {
+          "title": "강의 4: Service 계층 구현",
+          "videoUrl": "https://video.url/4",
+          "durationSeconds": 1500
+        }
+      ]
+    }
+  ]
+}
+
+### 2. 강좌 생성 - 최소 데이터
+POST {{baseUrl}}/courses
+Content-Type: application/json
+X-User-Id: {{instructorId}}
+
+{
+  "title": "빠른 시작 강좌",
+  "level": "JUNIOR"
+}
+
+##################################################
+# 조회 API
+##################################################
+
+### 3. 강좌 전체 조회 (기본)
+GET {{baseUrl}}/courses/search
+Accept: application/json
+
+### 4. 강좌 전체 조회 (페이징 + 정렬)
+GET {{baseUrl}}/courses/search?page=0&size=5&sort=createdAt,DESC
+Accept: application/json
+
+### 5. 강좌 전체 조회 (키워드 검색)
+GET {{baseUrl}}/courses/search?keyword=Spring&page=0&size=10
+Accept: application/json
+
+
+### 6. 강좌 상세 조회 (섹션/강의 id 확인용)
+GET {{baseUrl}}/courses/{{courseId}}
+Accept: application/json
+
+##################################################
+# 수정 API - 기본 정보
+##################################################
+
+### 7. 수정 - 제목만 변경
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "title": "Spring Boot 완전 정복 [2024 개정판]"
+}
+
+### 8. 수정 - 설명만 변경
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "description": "최신 Spring Boot 3.x 기반으로 업데이트된 과정"
+}
+
+### 9. 수정 - 난이도 변경
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "level": "MIDDLE"
+}
+
+### 10. 수정 - 기본 정보 여러 개 동시 변경
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "title": "Spring Boot & DDD 마스터 클래스",
+  "description": "도메인 주도 설계와 Spring Boot를 함께 배우는 과정",
+  "thumbnailUrl": "https://example.com/new-thumbnail.jpg",
+  "level": "SENIOR"
+}
+
+##################################################
+# 수정 API - 태그 (diff 방식)
+##################################################
+
+### 11. 수정 - 태그 추가 (기존 [1,2,3,4] -> [1,2,3,4,5])
+# 기존 태그 유지 + 새 태그 5 추가
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "tags": [1, 2, 3, 4, 5]
+}
+
+### 12. 수정 - 태그 일부 삭제 (기존에서 3,4 제거)
+# [1,2,3,4,5] -> [1,2,5]
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "tags": [1, 2, 5]
+}
+
+### 13. 수정 - 태그 전체 교체
+# [1,2,5] -> [10,20]
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "tags": [10, 20]
+}
+
+### 14. 수정 - 태그 전체 삭제
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "tags": []
+}
+
+##################################################
+# 수정 API - 섹션/강의 (diff 방식)
+# 주의: 실제 sectionId, lectureId로 변경 후 테스트
+##################################################
+
+### 15. 수정 - 기존 섹션 제목만 변경 (id로 식별)
+# sectionId를 실제 값으로 변경
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": {{sectionId}},
+      "title": "섹션 1: Spring Boot 소개 (수정됨)",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        },
+        {
+          "id": 2,
+          "title": "강의 2: 프로젝트 생성하기",
+          "videoUrl": "https://video.url/2",
+          "durationSeconds": 900
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "id": 3,
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        },
+        {
+          "id": 4,
+          "title": "강의 4: Service 계층 구현",
+          "videoUrl": "https://video.url/4",
+          "durationSeconds": 1500
+        }
+      ]
+    }
+  ]
+}
+
+### 16. 수정 - 기존 강의 정보 변경 (videoUrl, durationSeconds)
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란? (HD 리마스터)",
+          "videoUrl": "https://video.url/1-hd",
+          "durationSeconds": 720
+        },
+        {
+          "id": 2,
+          "title": "강의 2: 프로젝트 생성하기",
+          "videoUrl": "https://video.url/2",
+          "durationSeconds": 900
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "id": 3,
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        },
+        {
+          "id": 4,
+          "title": "강의 4: Service 계층 구현",
+          "videoUrl": "https://video.url/4",
+          "durationSeconds": 1500
+        }
+      ]
+    }
+  ]
+}
+
+### 17. 수정 - 기존 섹션에 새 강의 추가 (강의 id 없음 = 신규)
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        },
+        {
+          "id": 2,
+          "title": "강의 2: 프로젝트 생성하기",
+          "videoUrl": "https://video.url/2",
+          "durationSeconds": 900
+        },
+        {
+          "title": "강의 2.5: 추가된 새 강의 (id 없음)",
+          "videoUrl": "https://video.url/2-5",
+          "durationSeconds": 450
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "id": 3,
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        },
+        {
+          "id": 4,
+          "title": "강의 4: Service 계층 구현",
+          "videoUrl": "https://video.url/4",
+          "durationSeconds": 1500
+        }
+      ]
+    }
+  ]
+}
+
+### 18. 수정 - 기존 강의 삭제 (lectures에서 제외하면 삭제됨)
+# 섹션1에서 강의2 제거
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "id": 3,
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        },
+        {
+          "id": 4,
+          "title": "강의 4: Service 계층 구현",
+          "videoUrl": "https://video.url/4",
+          "durationSeconds": 1500
+        }
+      ]
+    }
+  ]
+}
+
+### 19. 수정 - 새 섹션 추가 (섹션 id 없음 = 신규)
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "title": "섹션 2: REST API 개발",
+      "lectures": [
+        {
+          "id": 3,
+          "title": "강의 3: Controller 작성하기",
+          "videoUrl": "https://video.url/3",
+          "durationSeconds": 1200
+        }
+      ]
+    },
+    {
+      "title": "섹션 3: 새로 추가된 섹션 (id 없음)",
+      "lectures": [
+        {
+          "title": "새 강의: 보너스 콘텐츠",
+          "videoUrl": "https://video.url/bonus",
+          "durationSeconds": 1800
+        }
+      ]
+    }
+  ]
+}
+
+### 20. 수정 - 기존 섹션 삭제 (sections에서 제외하면 삭제됨)
+# 섹션2 제거
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "id": 1,
+      "title": "섹션 1: Spring Boot 소개",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "강의 1: Spring Boot란?",
+          "videoUrl": "https://video.url/1",
+          "durationSeconds": 600
+        }
+      ]
+    }
+  ]
+}
+
+### 21. 수정 - 섹션 전체 교체 (모든 id 없음 = 기존 삭제 + 신규 생성)
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "sections": [
+    {
+      "title": "완전히 새로운 섹션 A",
+      "lectures": [
+        {
+          "title": "새 강의 A-1",
+          "videoUrl": "https://video.url/a1",
+          "durationSeconds": 500
+        },
+        {
+          "title": "새 강의 A-2",
+          "videoUrl": "https://video.url/a2",
+          "durationSeconds": 600
+        }
+      ]
+    },
+    {
+      "title": "완전히 새로운 섹션 B",
+      "lectures": [
+        {
+          "title": "새 강의 B-1",
+          "videoUrl": "https://video.url/b1",
+          "durationSeconds": 700
+        }
+      ]
+    }
+  ]
+}
+
+### 22. 수정 - 복합 케이스 (기본정보 + 태그 + 섹션 동시 수정)
+PATCH {{baseUrl}}/courses/{{courseId}}
+Content-Type: application/json
+
+{
+  "title": "Spring Boot 마스터 코스 [최종판]",
+  "description": "Spring Boot의 모든 것을 담은 완벽 가이드",
+  "level": "EXPERT",
+  "tags": [1, 2, 100],
+  "sections": [
+    {
+      "id": 1,
+      "title": "Part 1: 기초 (수정됨)",
+      "lectures": [
+        {
+          "id": 1,
+          "title": "기초 강의",
+          "videoUrl": "https://video.url/basic",
+          "durationSeconds": 1000
+        }
+      ]
+    },
+    {
+      "title": "Part 2: 신규 추가",
+      "lectures": [
+        {
+          "title": "고급 강의",
+          "videoUrl": "https://video.url/advanced",
+          "durationSeconds": 2000
+        }
+      ]
+    }
+  ]
+}
+
+##################################################
+# 삭제 API
+##################################################
+
+### 23. 강좌 삭제
+DELETE {{baseUrl}}/courses/{{courseId}}
+
+##################################################
+# 에러 테스트
+##################################################
+
+### 24. 에러 - 유효하지 않은 레벨
+POST {{baseUrl}}/courses
+Content-Type: application/json
+X-User-Id: {{instructorId}}
+
+{
+  "title": "에러 테스트",
+  "level": "INVALID_LEVEL"
+}
+
+### 25. 에러 - 존재하지 않는 강좌 조회
+GET {{baseUrl}}/courses/99999
+Accept: application/json
+
+### 26. 에러 - 존재하지 않는 강좌 수정
+PATCH {{baseUrl}}/courses/99999
+Content-Type: application/json
+
+{
+  "title": "존재하지 않는 강좌 수정 시도"
+}
+
+### 27. 에러 - 존재하지 않는 강좌 삭제
+DELETE {{baseUrl}}/courses/99999
