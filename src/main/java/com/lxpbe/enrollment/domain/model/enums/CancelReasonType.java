@@ -20,6 +20,7 @@ package com.lxpbe.enrollment.domain.model.enums;
  *     <li>POLICY_VIOLATION: 사용자 정책 위반</li>
  *     <li>FRAUD_SUSPECTED: 부정 결제(이상 거래) 또는 도용 등 부정 사용 의심</li>
  *     <li>OTHER: 그 외(상세 메모 필수)</li>
+ * </ul>
  */
 public enum CancelReasonType {
     PURCHASE_MISTAKE,
