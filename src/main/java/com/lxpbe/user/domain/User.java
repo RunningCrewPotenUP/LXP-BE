@@ -1,8 +1,8 @@
 package com.lxpbe.user.domain;
 
-import com.lxpbe.auth.domain.exception.AuthErrorCode;
 import com.lxpbe.common.domain.BaseEntity;
 import com.lxpbe.common.exception.DomainException;
+import com.lxpbe.user.domain.exception.UserErrorCode;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -34,6 +34,8 @@ public class User extends BaseEntity {
 
     private static final Pattern EMAIL_PATTERN =
             Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
+    private static final int MIN_TAG_COUNT = 3;
+    private static final int MAX_TAG_COUNT = 5;
 
     @Id @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -82,6 +84,7 @@ public class User extends BaseEntity {
     public static User create(String email, String encodedPassword, String name,
                                Role role, Level level, List<Long> tagIds) {
         validateEmailRegex(email);
+        validateCountTagIds(tagIds);
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
@@ -92,9 +95,15 @@ public class User extends BaseEntity {
                 .build();
     }
 
-    private static void validateEmailRegex( String email) {
+    private static void validateEmailRegex(String email) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new DomainException(AuthErrorCode.INVALID_EMAIL_FORMAT);
+            throw new DomainException(UserErrorCode.INVALID_EMAIL_FORMAT);
+        }
+    }
+
+    private static void validateCountTagIds(List<Long> tagIds) {
+        if (tagIds.size() < MIN_TAG_COUNT || tagIds.size() > MAX_TAG_COUNT) {
+            throw new DomainException(UserErrorCode.INVALID_TAG_COUNT);
         }
     }
 }
