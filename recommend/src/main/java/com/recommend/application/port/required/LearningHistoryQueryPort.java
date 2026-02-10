@@ -17,5 +17,5 @@ public interface LearningHistoryQueryPort {
      * @param learnerId 학습자 ID
      * @return 학습 이력 리스트
      */
-    List<LearningHistoryData> findByLearnerId(String learnerId);
+    List<LearningHistoryData> findByLearnerId(Long learnerId);  // ✅ String → Long
 }
