@@ -5,8 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
 
-public interface JpaMemberRecommendationRepository
-        extends JpaRepository<MemberRecommendationJpaEntity, Long> {
+public interface JpaMemberRecommendationRepository extends JpaRepository<MemberRecommendationJpaEntity, Long> {
 
-    Optional<MemberRecommendationJpaEntity> findByMemberId(String memberId);
+    Optional<MemberRecommendationJpaEntity> findByMemberId(Long memberId);
 }
