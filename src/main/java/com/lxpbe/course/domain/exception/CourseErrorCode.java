@@ -7,11 +7,11 @@ import java.util.Objects;
 
 public enum CourseErrorCode implements ErrorCode {
 
-    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "COURSE_NOT_FOUND", "강좌를 찾을 수 없습니다"),
-    INVALID_COURSE_DATA(HttpStatus.BAD_REQUEST, "INVALID_COURSE_DATA", "유효하지 않은 강좌 데이터입니다"),
-    INVALID_LEVEL(HttpStatus.BAD_REQUEST, "INVALID_LEVEL", "유효하지 않은 난이도입니다"),
-    SECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "SECTION_NOT_FOUND", "섹션을 찾을 수 없습니다"),
-    LECTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "LECTURE_NOT_FOUND", "강의를 찾을 수 없습니다"),
+    COURSE_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_001", "강좌를 찾을 수 없습니다"),
+    INVALID_COURSE_DATA(HttpStatus.BAD_REQUEST, "CRS_002", "유효하지 않은 강좌 데이터입니다"),
+    INVALID_LEVEL(HttpStatus.BAD_REQUEST, "CRS_003", "유효하지 않은 난이도입니다"),
+    SECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_004", "섹션을 찾을 수 없습니다"),
+    LECTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_005", "강의를 찾을 수 없습니다"),
     ;
 
     private final HttpStatus httpStatus;
