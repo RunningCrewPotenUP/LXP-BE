@@ -1,15 +1,10 @@
-// application/port/required/CourseMetaQueryPort.java
 package com.recommend.application.port.required;
 
-import com.recommend.application.dto.CourseMetaData;  // ✅ Application DTO로 변경
+import com.recommend.application.dto.CourseMetaData;
 
 import java.util.List;
 import java.util.Set;
 
-/**
- * 강좌 메타데이터 조회 Port (Outbound)
- * - 다른 BC(Course)와의 통신을 추상화
- */
 public interface CourseMetaQueryPort {
 
     /**
@@ -25,5 +20,5 @@ public interface CourseMetaQueryPort {
     /**
      * 강좌 ID 목록으로 조회
      */
-    List<CourseMetaData> findByCourses(List<String> courseIds);  // ✅ 수정됨
+    List<CourseMetaData> findByCourses(List<Long> courseIds);  // ✅ 메서드명 유지, 타입만 Long
 }

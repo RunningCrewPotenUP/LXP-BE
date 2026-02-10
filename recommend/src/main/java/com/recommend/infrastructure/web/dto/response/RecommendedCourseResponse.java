@@ -1,14 +1,23 @@
 package com.recommend.infrastructure.web.dto.response;
 
-import com.recommend.infrastructure.external.course.dto.CourseMetaResponse;
+import java.util.Set;
 
 /**
- * External API 응답용 - 추천 강좌 정보
+ * 추천 강좌 응답 DTO
  */
 public record RecommendedCourseResponse(
-        CourseMetaResponse course,
+        CourseInfo course,  // ✅ 내장 DTO (CourseMetaResponse 대체)
         double score,
         int rank
 ) {
-
+    /**
+     * 강좌 정보 (내장)
+     */
+    public record CourseInfo(
+            Long courseId,
+            String title,           // ← Adapter에서 조회 필요
+            Set<String> tags,
+            String difficulty,
+            boolean isPublic
+    ) {}
 }
