@@ -1,26 +1,27 @@
 package com.recommend.application.service;
 
-import com.lxp.recommend.application.dto.CourseMetaData;
-import com.lxp.recommend.application.dto.LearnerProfileData;
-import com.lxp.recommend.application.dto.LearningHistoryData;
-import com.lxp.recommend.application.port.provided.persistence.MemberRecommendationRepository;
-import com.lxp.recommend.application.port.required.CourseMetaQueryPort;
-import com.lxp.recommend.application.port.required.LearnerProfileQueryPort;
-import com.lxp.recommend.application.port.required.LearningHistoryQueryPort;
-import com.lxp.recommend.domain.model.*;
-import com.lxp.recommend.domain.model.ids.CourseId;
-import com.lxp.recommend.domain.model.ids.EnrollmentStatus;
-import com.lxp.recommend.domain.model.ids.Level;
-import com.lxp.recommend.domain.model.ids.MemberId;
-import com.lxp.recommend.domain.policy.ScoringPolicy;
-import com.lxp.recommend.infrastructure.external.common.LevelMapper;
+import com.recommend.application.dto.CourseMetaData;
+import com.recommend.application.dto.LearnerProfileData;
+import com.recommend.application.dto.LearningHistoryData;
+import com.recommend.application.port.provided.persistence.MemberRecommendationRepository;
+import com.recommend.application.port.required.CourseMetaQueryPort;
+import com.recommend.application.port.required.LearnerProfileQueryPort;
+import com.recommend.application.port.required.LearningHistoryQueryPort;
+import com.recommend.domain.model.*;
+import com.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.EnrollmentStatus;
+import com.recommend.domain.model.ids.Level;
+import com.recommend.domain.model.ids.MemberId;
+import com.recommend.domain.policy.ScoringPolicy;
+// ❌ 제거: import com.recommend.infrastructure.external.common.LevelMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -32,114 +33,109 @@ public class RecommendCommandService {
     private final CourseMetaQueryPort coursePort;
     private final LearningHistoryQueryPort historyPort;
 
+    /**
+     * 추천 재계산
+     */
     @Transactional
-    public void refreshRecommendation(String learnerId) {
-        log.info("[추천 계산 시작] learnerId={}", learnerId);
+    public void refreshRecommendations(String learnerId) {
+        log.info("[추천 재계산 시작] learnerId={}", learnerId);
 
-        // 1. 외부 데이터 수집
-        RecommendContext context = assembleContext(learnerId);
+        try {
+            // 1. Context 수집
+            RecommendContext context = assembleContext(learnerId);
 
-        if (!context.hasValidContext()) {
-            log.info("[추천 계산 중단] 유효한 컨텍스트 없음.");
-            return;
+            // 2. 점수 계산
+            List<RecommendedCourse> courses = calculateScores(context);
+
+            // 3. Aggregate 저장
+            MemberId memberId = new MemberId(learnerId);
+            MemberRecommendation recommendation = findOrCreateRecommendation(memberId);
+            recommendation.updateRecommendations(courses);
+
+            recommendationRepository.save(recommendation);
+
+            log.info("[추천 재계산 완료] learnerId={}, 추천개수={}", learnerId, courses.size());
+
+        } catch (Exception e) {
+            log.error("[추천 재계산 실패] learnerId={}", learnerId, e);
+            throw new RuntimeException("추천 재계산 중 오류 발생", e);
         }
-
-        // 2. 도메인 로직 (점수 계산)
-        List<RecommendedCourse> scoredCourses = calculateScores(context);
-
-        if (scoredCourses.isEmpty()) {
-            log.info("[추천 계산 중단] 점수 계산 결과 없음.");
-            return;
-        }
-
-        // 3. 저장
-        MemberRecommendation recommendation = findOrCreateRecommendation(MemberId.of(learnerId));
-        recommendation.updateItems(scoredCourses);
-        recommendationRepository.save(recommendation);
-
-        log.info("[추천 계산 완료] learnerId={}, 추천 수={}", learnerId, scoredCourses.size());
     }
 
     /**
-     * 추천 계산용 컨텍스트 조립
+     * Context 조립
      */
     private RecommendContext assembleContext(String learnerId) {
-        // 1. 프로필 조회
+        // 1. 학습자 프로필
         LearnerProfileData profile = userPort.getProfile(learnerId)
-                .orElseThrow(() -> new IllegalArgumentException("학습자 프로필을 찾을 수 없습니다: " + learnerId));
+                .orElseThrow(() -> new IllegalArgumentException("학습자를 찾을 수 없습니다: " + learnerId));
 
-        // 2. 학습 이력 조회 → Domain VO 변환
-        List<LearningHistoryData> historyDtos = historyPort.findByLearnerId(learnerId);
-
-        List<LearningHistory> histories = historyDtos.stream()
-                .map(d -> new LearningHistory(
-                        CourseId.of(d.courseId()),
-                        EnrollmentStatus.valueOf(d.status())
+        // 2. 학습 이력
+        List<LearningHistoryData> historyData = historyPort.findByLearnerId(learnerId);
+        List<LearningHistory> histories = historyData.stream()
+                .map(h -> new LearningHistory(
+                        new CourseId(h.courseId()),
+                        EnrollmentStatus.valueOf(h.status())
                 ))
                 .toList();
 
-        // 3. 학습자 레벨 기반 타겟 난이도 결정
-        Level learnerLevel = Level.valueOf(profile.learnerLevel());  // ✅ 수정
-        Set<Level> targetLevelEnums = LevelMapper.determineTargetLevels(learnerLevel);  // ✅ 활성화
-        Set<String> targetLevelStrings = LevelMapper.toStringSet(targetLevelEnums);  // ✅ 활성화
-
-        log.debug("[난이도 정책] learnerLevel={}, targetLevels={}", learnerLevel, targetLevelStrings);
-
-        // 4. 후보 강좌 조회 → Domain VO 변환
-        List<CourseMetaData> courseDtos = coursePort.findByDifficulties(targetLevelStrings, 100);
-        List<CourseCandidate> candidates = courseDtos.stream()
-                .map(d -> new CourseCandidate(
-                        CourseId.of(d.courseId()),
-                        d.tags(),
-                        Level.valueOf(d.difficulty()),  // ✅ 수정
-                        d.isPublic()
+        // 3. 강좌 후보
+        List<CourseMetaData> courseMetas = coursePort.findAll();
+        List<CourseCandidate> candidates = courseMetas.stream()
+                .map(meta -> new CourseCandidate(
+                        new CourseId(meta.courseId()),
+                        new HashSet<>(meta.tags()),
+                        Level.fromString(meta.difficulty()),  // ✅ Level에 정적 메서드 사용
+                        meta.isPublic()
                 ))
                 .toList();
 
-        log.debug("[데이터 수집 완료] 후보 강좌 수={}, 학습 이력 수={}", candidates.size(), histories.size());
-
-        return RecommendContext.create(profile.interestTags(), histories, candidates);
+        // 4. Context 생성
+        return RecommendContext.builder()
+                .explicitTags(new HashSet<>(profile.explicitTags()))
+                .implicitTags(new HashSet<>(profile.implicitTags()))
+                .learnerLevel(profile.level())
+                .learningHistories(histories)
+                .courseCandidates(candidates)
+                .build();
     }
 
     /**
-     * 점수 계산 및 순위 부여
+     * 점수 계산
      */
     private List<RecommendedCourse> calculateScores(RecommendContext context) {
-        ScoringPolicy policy = ScoringPolicy.defaultPolicy();
+        ScoringPolicy policy = new ScoringPolicy();
 
-        // 1. 점수 계산 (중간 객체 사용)
-        List<ScoredItem> scoredItems = context.getFilteredCandidates().stream()
+        // 필터링된 후보만 계산
+        List<CourseCandidate> filtered = context.getFilteredCandidates();
+
+        List<ScoredItem> scored = filtered.stream()
                 .map(candidate -> {
-                    double score = policy.calculateScore(candidate.getTags(), context.getTagContext());
+                    double score = policy.calculateScore(
+                            candidate.getTags(),
+                            context.getExplicitTags(),
+                            context.getImplicitTags()
+                    );
                     return new ScoredItem(candidate.getCourseId(), score);
                 })
-                .filter(item -> item.score() > 0)
-                .sorted((i1, i2) -> Double.compare(i2.score(), i1.score())) // 점수 내림차순
-                .limit(10)
+                .sorted(Comparator.comparingDouble(ScoredItem::score).reversed())
+                .limit(10)  // 최대 10개
                 .toList();
 
-        // 2. 순위 할당 및 최종 객체 생성
-        return java.util.stream.IntStream.range(0, scoredItems.size())
-                .mapToObj(i -> {
-                    ScoredItem item = scoredItems.get(i);
-                    return new RecommendedCourse(item.courseId(), item.score(), i + 1);
-                })
-                .toList();
+        // RecommendedCourse 변환
+        List<RecommendedCourse> result = new ArrayList<>();
+        for (int i = 0; i < scored.size(); i++) {
+            ScoredItem item = scored.get(i);
+            result.add(new RecommendedCourse(item.courseId, item.score, i + 1));
+        }
+
+        return result;
     }
 
-    /**
-     * 내부 헬퍼 레코드 (점수 계산용 임시 객체)
-     */
     private record ScoredItem(CourseId courseId, double score) {}
 
-    /**
-     * Aggregate 조회 또는 생성
-     */
     private MemberRecommendation findOrCreateRecommendation(MemberId memberId) {
         return recommendationRepository.findByMemberId(memberId)
-                .orElseGet(() -> {
-                    log.info("[신규 추천 생성] memberId={}", memberId.getValue());
-                    return new MemberRecommendation(memberId);
-                });
+                .orElseGet(() -> new MemberRecommendation(memberId));
     }
 }

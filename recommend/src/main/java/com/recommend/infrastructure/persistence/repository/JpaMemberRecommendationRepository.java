@@ -1,6 +1,6 @@
 package com.recommend.infrastructure.persistence.repository;
 
-import com.lxp.recommend.infrastructure.persistence.entity.MemberRecommendationJpaEntity;
+import com.recommend.infrastructure.persistence.entity.MemberRecommendationJpaEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

@@ -1,6 +1,6 @@
 package com.recommend.infrastructure.web.dto.response;
 
-import com.lxp.recommend.infrastructure.external.course.dto.CourseMetaResponse;
+import com.recommend.infrastructure.external.course.dto.CourseMetaResponse;
 
 /**
  * External API 응답용 - 추천 강좌 정보

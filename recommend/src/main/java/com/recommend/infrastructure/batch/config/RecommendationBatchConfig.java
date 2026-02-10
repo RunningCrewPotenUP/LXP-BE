@@ -1,9 +1,9 @@
 package com.recommend.infrastructure.batch.config;
 
-import com.lxp.recommend.infrastructure.batch.listener.JobCompletionListener;
-import com.lxp.recommend.infrastructure.batch.processor.RecommendationProcessor;
-import com.lxp.recommend.infrastructure.batch.reader.LearnerIdReader;
-import com.lxp.recommend.infrastructure.batch.writer.RecommendationWriter;
+import com.recommend.infrastructure.batch.listener.JobCompletionListener;
+import com.recommend.infrastructure.batch.processor.RecommendationProcessor;
+import com.recommend.infrastructure.batch.reader.LearnerIdReader;
+import com.recommend.infrastructure.batch.writer.RecommendationWriter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;

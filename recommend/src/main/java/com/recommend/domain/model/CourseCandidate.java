@@ -1,7 +1,7 @@
 package com.recommend.domain.model;
 
-import com.lxp.recommend.domain.model.ids.CourseId;
-import com.lxp.recommend.domain.model.ids.Level;
+import com.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.Level;
 
 import java.util.Set;
 

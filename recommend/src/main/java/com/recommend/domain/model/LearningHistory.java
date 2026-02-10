@@ -1,7 +1,7 @@
 package com.recommend.domain.model;
 
-import com.lxp.recommend.domain.model.ids.CourseId;
-import com.lxp.recommend.domain.model.ids.EnrollmentStatus;
+import com.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.EnrollmentStatus;
 
 /**
  * 학습 이력 (Domain Model)
