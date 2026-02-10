@@ -1,5 +1,6 @@
 package com.lxpbe.common.config;
 
+import com.lxpbe.common.security.JwtAuthenticationEntryPoint;
 import com.lxpbe.common.security.JwtAuthenticationFilter;
 import com.lxpbe.common.security.JwtProperties;
 import com.lxpbe.common.security.JwtTokenProvider;
@@ -22,6 +23,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -35,6 +37,9 @@ public class SecurityConfig {
                                 "/auth/login"
                         ).permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class)
                 .build();

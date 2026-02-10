@@ -1,5 +1,6 @@
 package com.lxpbe.common.security;
 
+import com.lxpbe.common.exception.DomainException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -17,6 +18,7 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+    public static final String AUTH_ERROR_ATTRIBUTE = "AUTH_ERROR";
     private static final String AUTHORIZATION_HEADER = "Authorization";
     private static final String BEARER_PREFIX = "Bearer ";
     private static final String ROLE_PREFIX = "ROLE_";
@@ -29,18 +31,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     @NonNull FilterChain filterChain) throws ServletException, IOException {
         String token = extractToken(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Claims claims = jwtTokenProvider.getClaimsFromToken(token);
-            Long userId = Long.valueOf(claims.getSubject());
+        if (token != null) {
+            try {
+                Claims claims = jwtTokenProvider.getClaimsFromToken(token);
+                Long userId = Long.valueOf(claims.getSubject());
 
-            List<String> roles = claims.get("roles", List.class);
-            List<SimpleGrantedAuthority> authorities = roles.stream()
-                    .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
-                    .toList();
+                List<String> roles = claims.get("roles", List.class);
+                List<SimpleGrantedAuthority> authorities = roles.stream()
+                        .map(role -> new SimpleGrantedAuthority(ROLE_PREFIX + role))
+                        .toList();
 
-            UsernamePasswordAuthenticationToken authentication =
-                    new UsernamePasswordAuthenticationToken(userId, null, authorities);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+                UsernamePasswordAuthenticationToken authentication =
+                        new UsernamePasswordAuthenticationToken(userId, null, authorities);
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            } catch (DomainException e) {
+                request.setAttribute(AUTH_ERROR_ATTRIBUTE, e.errorCode());
+            }
         }
 
         filterChain.doFilter(request, response);

@@ -1,7 +1,10 @@
 package com.lxpbe.common.security;
 
+import com.lxpbe.auth.domain.exception.AuthErrorCode;
+import com.lxpbe.common.exception.DomainException;
 import com.lxpbe.user.domain.enums.Role;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
@@ -38,24 +41,17 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    public boolean validateToken(String token) {
-        try {
-            getClaimsFromToken(token);
-            return true;
-        } catch (JwtException | IllegalArgumentException e) {
-            return false;
-        }
-    }
-
-    public Long getUserIdFromToken(String token) {
-        return Long.valueOf(getClaimsFromToken(token).getSubject());
-    }
-
     public Claims getClaimsFromToken(String token) {
-        return Jwts.parser()
-                .verifyWith(secretKey)
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
+        try {
+            return Jwts.parser()
+                    .verifyWith(secretKey)
+                    .build()
+                    .parseSignedClaims(token)
+                    .getPayload();
+        } catch (ExpiredJwtException e) {
+            throw new DomainException(AuthErrorCode.EXPIRED_TOKEN, e);
+        } catch (JwtException | IllegalArgumentException e) {
+            throw new DomainException(AuthErrorCode.INVALID_TOKEN, e);
+        }
     }
 }
