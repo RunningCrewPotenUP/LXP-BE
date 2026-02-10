@@ -17,6 +17,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
+import jakarta.persistence.Version;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -45,6 +46,11 @@ import static com.lxpbe.enrollment.domain.exception.EnrollmentErrorCode.CANCEL_T
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Getter @Accessors(fluent = true)
 public class Enrollment extends AbstractAggregateRoot<Enrollment> {
+
+    // ----- 낙관적 락 적용
+
+    @Version
+    private Integer version;
 
     // ----- fields
 
