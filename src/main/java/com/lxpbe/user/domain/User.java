@@ -1,6 +1,8 @@
 package com.lxpbe.user.domain;
 
+import com.lxpbe.auth.domain.exception.AuthErrorCode;
 import com.lxpbe.common.domain.BaseEntity;
+import com.lxpbe.common.exception.DomainException;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +31,9 @@ import lombok.NoArgsConstructor;
 @Table(name = "users")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User extends BaseEntity {
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$");
 
     @Id @Getter
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -75,6 +81,7 @@ public class User extends BaseEntity {
 
     public static User create(String email, String encodedPassword, String name,
                                Role role, Level level, List<Long> tagIds) {
+        validateEmailRegex(email);
         return User.builder()
                 .email(email)
                 .password(encodedPassword)
@@ -83,5 +90,11 @@ public class User extends BaseEntity {
                 .level(level)
                 .tagIds(tagIds)
                 .build();
+    }
+
+    private static void validateEmailRegex( String email) {
+        if (!EMAIL_PATTERN.matcher(email).matches()) {
+            throw new DomainException(AuthErrorCode.INVALID_EMAIL_FORMAT);
+        }
     }
 }
