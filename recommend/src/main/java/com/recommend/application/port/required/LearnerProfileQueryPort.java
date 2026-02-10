@@ -1,6 +1,6 @@
 package com.recommend.application.port.required;
 
-import com.lxp.recommend.application.dto.LearnerProfileData;
+import com.recommend.application.dto.LearnerProfileData;
 
 import java.util.Optional;
 

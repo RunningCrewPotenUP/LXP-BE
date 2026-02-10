@@ -1,13 +1,13 @@
 package com.recommend.application.service; // 또는 com.lxp.recommend.application.service.query
 
-import com.lxp.recommend.application.dto.RecommendedCourseDto;
-import com.lxp.recommend.application.port.provided.persistence.MemberRecommendationRepository;
-import com.lxp.recommend.application.port.required.CourseMetaQueryPort;
-import com.lxp.recommend.domain.model.MemberRecommendation;
-import com.lxp.recommend.domain.model.RecommendedCourse;
-import com.lxp.recommend.domain.model.ids.MemberId;
-import com.lxp.recommend.infrastructure.external.course.dto.CourseMetaResponse;
-import com.lxp.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
+import com.recommend.application.dto.RecommendedCourseDto;
+import com.recommend.application.port.provided.persistence.MemberRecommendationRepository;
+import com.recommend.application.port.required.CourseMetaQueryPort;
+import com.recommend.domain.model.MemberRecommendation;
+import com.recommend.domain.model.RecommendedCourse;
+import com.recommend.domain.model.ids.MemberId;
+import com.recommend.infrastructure.external.course.dto.CourseMetaResponse;
+import com.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

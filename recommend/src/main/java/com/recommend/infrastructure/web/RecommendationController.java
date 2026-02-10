@@ -1,11 +1,11 @@
 package com.recommend.infrastructure.web;
 
-import com.lxp.recommend.application.service.RecommendCommandService;
-import com.lxp.recommend.application.service.RecommendQueryService;
-import com.lxp.recommend.infrastructure.web.dto.response.RecommendationListResponse;
-import com.lxp.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
-import com.lxp.recommend.infrastructure.web.external.passport.model.PassportClaims;
-import com.lxp.recommend.infrastructure.web.support.PassportResolver;
+import com.recommend.application.service.RecommendCommandService;
+import com.recommend.application.service.RecommendQueryService;
+import com.recommend.infrastructure.web.dto.response.RecommendationListResponse;
+import com.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
+import com.recommend.infrastructure.web.external.passport.model.PassportClaims;
+import com.recommend.infrastructure.web.support.PassportResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
