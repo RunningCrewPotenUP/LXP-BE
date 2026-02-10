@@ -1,5 +1,6 @@
 package com.lxpbe.enrollment.presentation;
 
+import com.lxpbe.common.security.LoginUser;
 import com.lxpbe.enrollment.application.EnrollmentCommandService;
 import com.lxpbe.enrollment.application.EnrollmentQueryService;
 import com.lxpbe.enrollment.application.command.EnrollmentCancelCommand;
@@ -63,11 +64,4 @@ public class EnrollmentController {
                 .ok()
                 .body(response);
     }
-}
-
-/**
- * Stub
- * - 지윤님 pr 머지되면 대체할 것
- */
-@interface LoginUser {
 }
