@@ -15,10 +15,10 @@ import java.util.Map;
 public class StubTagAdapter implements TagPort {
 
     private static final Map<Long, TagResult> STUB_TAGS = Map.of(
-            1L, new TagResult(1L, "Spring", "green", "SOLID"),
-            2L, new TagResult(2L, "DDD", "blue", "SOLID"),
-            3L, new TagResult(3L, "Redis", "red", "SOLID"),
-            4L, new TagResult(4L, "Java", "orange", "GHOST")
+            1L, new TagResult(1L, "Spring"),
+            2L, new TagResult(2L, "DDD"),
+            3L, new TagResult(3L, "Redis"),
+            4L, new TagResult(4L, "Java")
     );
 
     @Override

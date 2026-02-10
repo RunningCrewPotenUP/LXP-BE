@@ -10,9 +10,9 @@ import com.lxpbe.course.application.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -26,15 +26,9 @@ public class CourseController {
 
     @GetMapping("/search")
     public ResponseEntity<ApiResponse<Page<CourseListResponse>>> searchCourses(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
-            @RequestParam(defaultValue = "createdAt") String sort,
-            @RequestParam(defaultValue = "DESC") String dir,
+            @PageableDefault(direction = Sort.Direction.DESC, sort = {"createdAt"}) Pageable pageable,
             @RequestParam(required = false) String keyword
     ) {
-        Sort.Direction direction = Sort.Direction.fromString(dir);
-        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sort));
-
         Page<CourseListResponse> result = courseService.searchCourses(keyword, pageable);
         return ResponseEntity.ok(new ApiResponse<>(result, null));
     }

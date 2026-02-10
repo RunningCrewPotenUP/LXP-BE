@@ -42,8 +42,7 @@ public class CourseService {
     }
 
     public CourseDetailResponse getCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
+        Course course = getCourseOrThrow(courseId);
 
         InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
                 .orElse(InstructorResult.unknown(course.getInstructorId()));
@@ -66,8 +65,7 @@ public class CourseService {
 
     @Transactional
     public CourseDetailResponse updateCourse(Long courseId, UpdateCourseRequest request) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
+        Course course = getCourseOrThrow(courseId);
 
         course.update(CourseUpdateCommand.of(courseId, request));
 
@@ -80,8 +78,12 @@ public class CourseService {
 
     @Transactional
     public void deleteCourse(Long courseId) {
-        Course course = courseRepository.findById(courseId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
+        Course course = getCourseOrThrow(courseId);
         courseRepository.delete(course);
+    }
+
+    public Course getCourseOrThrow(Long courseId) {
+        return courseRepository.findById(courseId)
+                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 }
