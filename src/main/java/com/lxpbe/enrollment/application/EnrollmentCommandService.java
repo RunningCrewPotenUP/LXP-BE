@@ -10,6 +10,7 @@ import com.lxpbe.enrollment.presentation.response.EnrollmentCreatedResponse;
 import com.lxpbe.enrollment.repository.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -55,6 +56,11 @@ public class EnrollmentCommandService {
         }
 
         Enrollment target = optionalEnrollment.get();
+
+        if (!Objects.equals(target.userId(), command.userId())) {
+            throw new EnrollmentException(EnrollmentErrorCode.CANNOT_CANCEL_OTHER_PERSONS_ENROLLMENT);
+        }
+
         target.cancel(CancelType.SELF_SERVICE, command.reasonType(), command.reason());
         enrollmentRepository.save(target);
 
