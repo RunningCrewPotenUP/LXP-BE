@@ -20,7 +20,7 @@ spring:
 
 jwt:
   secret: ${JWT_SECRET_KEY}
-  accessToken-expiration: ${JWT_ACCESS_TOKEN_EXPIRATION}
+  access-token-expiration: ${JWT_TOKEN_EXPIRATION:3600000}
 
 logging:
   level:
