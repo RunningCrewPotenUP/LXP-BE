@@ -14,6 +14,7 @@ public enum AuthErrorCode implements ErrorCode {
     LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "AUTH-003", "이메일이나 비밀번호가 일치하지 않습니다."),
     INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-004", "토큰이 유효하지 않습니다."),
     EXPIRED_TOKEN(HttpStatus.UNAUTHORIZED, "AUTH-005", "만료된 토큰입니다."),
+    UNAUTHORIZED(HttpStatus.UNAUTHORIZED, "AUTH-006", "로그인이 필요합니다."),
     ;
 
     private final HttpStatus httpStatus;
