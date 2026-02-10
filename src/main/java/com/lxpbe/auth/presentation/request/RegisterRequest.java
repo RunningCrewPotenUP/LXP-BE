@@ -4,6 +4,7 @@ import com.lxpbe.user.domain.enums.Level;
 import com.lxpbe.user.domain.enums.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
@@ -17,11 +18,11 @@ public record RegisterRequest(
         String password,
         @NotBlank(message = "이름은 비어있을 수 없습니다.")
         String name,
-        @NotBlank(message = "역할은 비어있을 수 없습니다.")
+        @NotNull(message = "역할은 비어있을 수 없습니다.")
         Role role,
-        @NotBlank(message = "태그는 비어있을 수 없습니다.")
+        @NotNull(message = "태그는 비어있을 수 없습니다.")
         List<Long> tagIds,
-        @NotBlank(message = "레벨은 비어있을 수 없습니다.")
+        @NotNull(message = "레벨은 비어있을 수 없습니다.")
         Level level
 ) {
     private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,20}$";
