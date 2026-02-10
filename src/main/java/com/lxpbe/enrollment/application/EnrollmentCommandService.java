@@ -1,7 +1,6 @@
 package com.lxpbe.enrollment.application;
 
 import com.lxpbe.enrollment.application.command.EnrollmentCancelCommand;
-import com.lxpbe.enrollment.application.policy.EnrollmentCancelPolicy;
 import com.lxpbe.enrollment.domain.exception.EnrollmentErrorCode;
 import com.lxpbe.enrollment.domain.exception.EnrollmentException;
 import com.lxpbe.enrollment.domain.model.Enrollment;
@@ -17,14 +16,11 @@ import java.util.Optional;
 public class EnrollmentCommandService {
 
     private final EnrollmentRepository enrollmentRepository;
-    private final EnrollmentCancelPolicy cancelPolicy;
 
     public EnrollmentCommandService(
-            EnrollmentRepository enrollmentRepository,
-            EnrollmentCancelPolicy cancelPolicy
+            EnrollmentRepository enrollmentRepository
     ) {
         this.enrollmentRepository = enrollmentRepository;
-        this.cancelPolicy = cancelPolicy;
     }
 
     public EnrollmentCreatedResponse enroll(Long userId, Long courseId) {
@@ -59,7 +55,7 @@ public class EnrollmentCommandService {
         }
 
         Enrollment target = optionalEnrollment.get();
-        cancelPolicy.cancel(target, CancelType.SELF_SERVICE, command.reasonType(), command.reason());
+        target.cancel(CancelType.SELF_SERVICE, command.reasonType(), command.reason());
         enrollmentRepository.save(target);
 
         return EnrollmentCancelledResponse.builder()
