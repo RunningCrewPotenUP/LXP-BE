@@ -5,6 +5,9 @@ import com.recommend.domain.model.ids.Level;
 
 import java.util.Set;
 
+/**
+ * 사용자의 레벨 및 태그에 드는 후보군
+ */
 public class CourseCandidate {
     private final CourseId courseId;
     private final Set<String> tags;

@@ -8,24 +8,24 @@ import java.util.Objects;
  */
 public class MemberId {
 
-    private final String value;
+    private final Long value;  // ✅ String → Long
 
     protected MemberId() {
-        this.value = null; // JPA 재구성용, 실제로는 사용 안 됨
+        this.value = null; // JPA 재구성용
     }
 
-    public MemberId(String value) {
-        if (value == null || value.isBlank()) {
-            throw new IllegalArgumentException("MemberId cannot be null or blank");
+    public MemberId(Long value) {  // ✅ Long 파라미터
+        if (value == null) {
+            throw new IllegalArgumentException("MemberId cannot be null");
         }
         this.value = value;
     }
 
-    public static MemberId of(String value) {
+    public static MemberId of(Long value) {  // ✅ Long 파라미터
         return new MemberId(value);
     }
 
-    public String getValue() {
+    public Long getValue() {  // ✅ Long 반환
         return value;
     }
 
@@ -44,6 +44,6 @@ public class MemberId {
 
     @Override
     public String toString() {
-        return value;
+        return String.valueOf(value);  // ✅ Long → String 변환
     }
 }
