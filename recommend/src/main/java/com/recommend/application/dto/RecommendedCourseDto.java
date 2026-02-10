@@ -1,7 +1,7 @@
 package com.recommend.application.dto;
 
 public record RecommendedCourseDto(
-        String courseId,
+        Long courseId,
         double score,
         int rank
 ) {}

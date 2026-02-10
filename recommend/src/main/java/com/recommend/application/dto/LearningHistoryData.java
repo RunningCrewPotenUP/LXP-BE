@@ -1,12 +1,9 @@
 package com.recommend.application.dto;
 
 /**
- * 학습 이력 데이터 (Recommend BC 관점)
- *
- * 수강 상태 정보
+ * 학습 이력 데이터
  */
 public record LearningHistoryData(
-        String learnerId,
-        String courseId,
-        String status             // "ENROLLED", "COMPLETED", "DROPPED"
+        Long courseId,    // ✅ String → Long
+        String status     // "ENROLLED", "COMPLETED", "CANCELED"
 ) {}

@@ -5,7 +5,7 @@ import com.recommend.application.dto.RecommendedCourseDto;
 import java.util.List;
 
 public record RecommendationResponse(
-        String memberId,
+        Long memberId,
         List<RecommendedCourseDto> recommendations,
         String calculatedAt
 ) {}

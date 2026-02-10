@@ -3,18 +3,16 @@ package com.recommend.application.dto;
 import java.util.Set;
 
 /**
- * 학습자 프로필 데이터 (Recommend BC 관점)
- * 추천 계산에 필요한 정보만 포함
+ * 학습자 프로필 데이터
  */
 public record LearnerProfileData(
-        String learnerId,
-        String learnerLevel,      // "JUNIOR", "MIDDLE", "SENIOR", "EXPERT"
-        Set<String> interestTags  // 사용자가 선택한 관심 태그
+        Long learnerId,           // ✅ String → Long
+        Set<String> explicitTags, // 명시적 관심 태그
+        Set<String> implicitTags, // 암묵적 관심 태그 (수강 중인 강좌의 태그)
+        String level              // "JUNIOR", "MIDDLE", "SENIOR", "EXPERT"
 ) {
-    /**
-     * Compact Constructor: Null 방어
-     */
     public LearnerProfileData {
-        interestTags = interestTags != null ? Set.copyOf(interestTags) : Set.of();
+        explicitTags = explicitTags != null ? Set.copyOf(explicitTags) : Set.of();
+        implicitTags = implicitTags != null ? Set.copyOf(implicitTags) : Set.of();
     }
 }
