@@ -16,22 +16,22 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LearnerIdReader implements ItemReader<String> {
+public class LearnerIdReader implements ItemReader<Long> {  // ✅ String → Long 변경
 
     private final JdbcTemplate jdbcTemplate;
-    private Iterator<String> learnerIdIterator;
+    private Iterator<Long> learnerIdIterator;  // ✅ String → Long 변경
     private boolean initialized = false;
 
     /**
      * 학습자 ID를 하나씩 반환
      * 첫 호출 시 전체 학습자 조회 후 Iterator로 순회
      *
-     * @return 다음 학습자 ID, 없으면 null (배치 종료 신호)
+     * @return 다음 학습자 ID (Long), 없으면 null (배치 종료 신호)
      */
     @Override
-    public String read() {
+    public Long read() {  // ✅ String → Long 변경
         if (!initialized) {
-            List<String> learnerIds = fetchAllLearnerIds();
+            List<Long> learnerIds = fetchAllLearnerIds();  // ✅ String → Long 변경
             log.info("[Batch Reader] Loaded {} learners", learnerIds.size());
             learnerIdIterator = learnerIds.iterator();
             initialized = true;
@@ -45,14 +45,15 @@ public class LearnerIdReader implements ItemReader<String> {
             return null;
         }
     }
+
     /**
      * DB에서 전체 학습자 ID 조회
-     * 기존 추천 테이블에서 DISTINCT member_id 추출
+     * member_recommendations 테이블에서 DISTINCT member_id 추출
      *
-     * TODO: Member BC API 호출로 변경 가능
+     * TODO: Member BC Facade 호출로 변경 가능
      */
-    private List<String> fetchAllLearnerIds() {
+    private List<Long> fetchAllLearnerIds() {  // ✅ String → Long 변경
         String sql = "SELECT DISTINCT member_id FROM member_recommendations ORDER BY member_id";
-        return jdbcTemplate.queryForList(sql, String.class);
+        return jdbcTemplate.queryForList(sql, Long.class);  // ✅ String.class → Long.class 변경
     }
 }

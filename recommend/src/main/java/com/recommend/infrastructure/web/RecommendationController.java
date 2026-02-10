@@ -4,66 +4,62 @@ import com.recommend.application.service.RecommendCommandService;
 import com.recommend.application.service.RecommendQueryService;
 import com.recommend.infrastructure.web.dto.response.RecommendationListResponse;
 import com.recommend.infrastructure.web.dto.response.RecommendedCourseResponse;
-import com.recommend.infrastructure.web.external.passport.model.PassportClaims;
-import com.recommend.infrastructure.web.support.PassportResolver;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 /**
- * 추천 서비스 External API
- * 클라이언트(프론트엔드)에서 호출하는 엔드포인트
+ * 추천 서비스 API
+ * 인증된 사용자의 추천 강좌를 조회하고 갱신하는 엔드포인트
  */
 @Slf4j
 @RestController
-@RequestMapping("/api-v1/recommend")
+@RequestMapping("/recommend")
 @RequiredArgsConstructor
-@ConditionalOnProperty(
-        prefix = "passport",
-        name = "enabled",
-        havingValue = "true"
-)
 public class RecommendationController {
 
     private final RecommendCommandService commandService;
     private final RecommendQueryService queryService;
-    private final PassportResolver passportResolver;
 
     /**
      * 내 추천 강좌 목록 조회
-     * GET /api-v1/recommendations/me
+     * GET /recommend/me
+     *
+     * @param userId Spring Security에서 주입된 인증된 사용자 ID
+     * @return 추천 강좌 목록
      */
     @GetMapping("/me")
     public ResponseEntity<RecommendationListResponse> getMyRecommendations(
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId  // ✅ Spring Security 사용
     ) {
-        PassportClaims passport = passportResolver.resolve(request);
-        log.info("Fetching recommendations for userId: {}", passport.userId());
+        log.info("[추천 조회] userId={}", userId);
 
-        commandService.refreshRecommendation(passport.userId());
-
-        List<RecommendedCourseResponse> responses = queryService.getTopRecommendations(passport.userId());
+        // 추천 조회 (Repository에서 조회만)
+        List<RecommendedCourseResponse> responses = queryService.getTopRecommendations(userId);
 
         return ResponseEntity.ok(RecommendationListResponse.from(responses));
     }
+
     /**
      * 추천 목록 갱신 (명시적 호출)
-     * POST /api-v1/recommendations/refresh
+     * POST /recommend/refresh
+     *
+     * @param userId Spring Security에서 주입된 인증된 사용자 ID
+     * @return 204 No Content
      */
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshRecommendation(
-            HttpServletRequest request
+            @AuthenticationPrincipal Long userId  // ✅ Spring Security 사용
     ) {
-        PassportClaims passport = passportResolver.resolve(request);  //
-        log.info("Refreshing recommendations for userId: {}", passport.userId());
+        log.info("[추천 갱신] userId={}", userId);
 
-        commandService.refreshRecommendation(passport.userId());
+        // 추천 재계산 (Facade 호출하여 계산)
+        commandService.refreshRecommendations(userId);  // ✅ 메서드명 수정
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
