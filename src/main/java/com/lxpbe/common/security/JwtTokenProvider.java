@@ -1,6 +1,6 @@
 package com.lxpbe.common.security;
 
-import com.lxpbe.user.domain.Role;
+import com.lxpbe.user.domain.enums.Role;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;

@@ -1,4 +1,4 @@
-package com.lxpbe.user.domain;
+package com.lxpbe.user.domain.enums;
 
 import lombok.Getter;
 
@@ -15,4 +15,3 @@ public enum Role {
         this.description = description;
     }
 }
-

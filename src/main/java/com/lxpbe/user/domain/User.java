@@ -13,6 +13,8 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Table;
+import com.lxpbe.user.domain.enums.Level;
+import com.lxpbe.user.domain.enums.Role;
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
@@ -69,5 +71,17 @@ public class User extends BaseEntity {
         this.roles = roles != null ? roles : EnumSet.noneOf(Role.class);
         this.level = level;
         this.tagIds = tagIds != null ? tagIds : new ArrayList<>();
+    }
+
+    public static User create(String email, String encodedPassword, String name,
+                               Role role, Level level, List<Long> tagIds) {
+        return User.builder()
+                .email(email)
+                .password(encodedPassword)
+                .name(name)
+                .roles(EnumSet.of(role))
+                .level(level)
+                .tagIds(tagIds)
+                .build();
     }
 }

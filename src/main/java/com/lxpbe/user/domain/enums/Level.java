@@ -1,4 +1,4 @@
-package com.lxpbe.user.domain;
+package com.lxpbe.user.domain.enums;
 
 import lombok.Getter;
 
