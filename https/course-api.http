@@ -8,14 +8,71 @@
 @lectureId = 1
 
 ##################################################
+# 인증 API
+##################################################
+
+### 강사 회원가입
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "instructor@example.com",
+  "password": "Instructor1234!",
+  "name": "김길동",
+  "role": "INSTRUCTOR",
+  "tagIds": [1, 2, 3],
+  "level": "JUNIOR"
+}
+
+### 강사 로그인
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "instructor@example.com",
+  "password": "Instructor1234!"
+}
+
+> {%
+    client.global.set("instructor_jwt_token", response.body.data.accessToken);
+    client.log("토큰이 성공적으로 저장되었습니다: " + client.global.get("instructor_jwt_token"));
+%}
+
+### 일반 회원가입
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test1234!",
+  "name": "홍길동",
+  "role": "LEARNER",
+  "tagIds": [1, 2, 3],
+  "level": "JUNIOR"
+}
+
+### 일반 로그인
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test1234!"
+}
+
+> {%
+    client.global.set("learner_jwt_token", response.body.data.accessToken);
+    client.log("토큰이 성공적으로 저장되었습니다: " + client.global.get("learner_jwt_token"));
+%}
+
+##################################################
 # 생성 API
 ##################################################
 
-### 1. 강좌 생성 (섹션/강의 포함, durationSeconds 포함)
-
+### 강좌 생성 (섹션/강의 포함, durationSeconds 포함)
 POST {{baseUrl}}/courses
 Content-Type: application/json
-X-User-Id: {{instructorId}}
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "Spring Boot 완전 정복",
@@ -57,10 +114,20 @@ X-User-Id: {{instructorId}}
   ]
 }
 
-### 2. 강좌 생성 - 최소 데이터
+### 강좌 생성 - 최소 데이터
 POST {{baseUrl}}/courses
 Content-Type: application/json
-X-User-Id: {{instructorId}}
+Authorization: Bearer {{instructor_jwt_token}}
+
+{
+  "title": "빠른 시작 강좌",
+  "level": "JUNIOR"
+}
+
+### 일반 회원 강좌 생성
+POST {{baseUrl}}/courses
+Content-Type: application/json
+Authorization: Bearer {{learner_jwt_token}}
 
 {
   "title": "빠른 시작 강좌",
@@ -71,20 +138,20 @@ X-User-Id: {{instructorId}}
 # 조회 API
 ##################################################
 
-### 3. 강좌 전체 조회 (기본)
+### 강좌 전체 조회 (기본)
 GET {{baseUrl}}/courses/search
 Accept: application/json
 
-### 4. 강좌 전체 조회 (페이징 + 정렬)
+### 강좌 전체 조회 (페이징 + 정렬)
 GET {{baseUrl}}/courses/search?page=0&size=5&sort=createdAt,DESC
 Accept: application/json
 
-### 5. 강좌 전체 조회 (키워드 검색)
+### 강좌 전체 조회 (키워드 검색)
 GET {{baseUrl}}/courses/search?keyword=Spring&page=0&size=10
 Accept: application/json
 
 
-### 6. 강좌 상세 조회 (섹션/강의 id 확인용)
+### 강좌 상세 조회 (섹션/강의 id 확인용)
 GET {{baseUrl}}/courses/{{courseId}}
 Accept: application/json
 
@@ -92,33 +159,37 @@ Accept: application/json
 # 수정 API - 기본 정보
 ##################################################
 
-### 7. 수정 - 제목만 변경
+### 수정 - 제목만 변경
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "Spring Boot 완전 정복 [2024 개정판]"
 }
 
-### 8. 수정 - 설명만 변경
+### 수정 - 설명만 변경
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "description": "최신 Spring Boot 3.x 기반으로 업데이트된 과정"
 }
 
-### 9. 수정 - 난이도 변경
+### 수정 - 난이도 변경
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "level": "MIDDLE"
 }
 
-### 10. 수정 - 기본 정보 여러 개 동시 변경
+### 수정 - 기본 정보 여러 개 동시 변경
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "Spring Boot & DDD 마스터 클래스",
@@ -131,36 +202,40 @@ Content-Type: application/json
 # 수정 API - 태그 (diff 방식)
 ##################################################
 
-### 11. 수정 - 태그 추가 (기존 [1,2,3,4] -> [1,2,3,4,5])
+### 수정 - 태그 추가 (기존 [1,2,3,4] -> [1,2,3,4,5])
 # 기존 태그 유지 + 새 태그 5 추가
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "tags": [1, 2, 3, 4, 5]
 }
 
-### 12. 수정 - 태그 일부 삭제 (기존에서 3,4 제거)
+### 수정 - 태그 일부 삭제 (기존에서 3,4 제거)
 # [1,2,3,4,5] -> [1,2,5]
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "tags": [1, 2, 5]
 }
 
-### 13. 수정 - 태그 전체 교체
+### 수정 - 태그 전체 교체
 # [1,2,5] -> [10,20]
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "tags": [10, 20]
 }
 
-### 14. 수정 - 태그 전체 삭제
+### 수정 - 태그 전체 삭제
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "tags": []
@@ -171,10 +246,11 @@ Content-Type: application/json
 # 주의: 실제 sectionId, lectureId로 변경 후 테스트
 ##################################################
 
-### 15. 수정 - 기존 섹션 제목만 변경 (id로 식별)
+### 수정 - 기존 섹션 제목만 변경 (id로 식별)
 # sectionId를 실제 값으로 변경
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -217,9 +293,10 @@ Content-Type: application/json
   ]
 }
 
-### 16. 수정 - 기존 강의 정보 변경 (videoUrl, durationSeconds)
+### 수정 - 기존 강의 정보 변경 (videoUrl, durationSeconds)
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -262,9 +339,10 @@ Content-Type: application/json
   ]
 }
 
-### 17. 수정 - 기존 섹션에 새 강의 추가 (강의 id 없음 = 신규)
+### 수정 - 기존 섹션에 새 강의 추가 (강의 id 없음 = 신규)
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -312,10 +390,11 @@ Content-Type: application/json
   ]
 }
 
-### 18. 수정 - 기존 강의 삭제 (lectures에서 제외하면 삭제됨)
+### 수정 - 기존 강의 삭제 (lectures에서 제외하면 삭제됨)
 # 섹션1에서 강의2 제거
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -352,9 +431,10 @@ Content-Type: application/json
   ]
 }
 
-### 19. 수정 - 새 섹션 추가 (섹션 id 없음 = 신규)
+### 수정 - 새 섹션 추가 (섹션 id 없음 = 신규)
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -395,10 +475,11 @@ Content-Type: application/json
   ]
 }
 
-### 20. 수정 - 기존 섹션 삭제 (sections에서 제외하면 삭제됨)
+### 수정 - 기존 섹션 삭제 (sections에서 제외하면 삭제됨)
 # 섹션2 제거
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -417,9 +498,10 @@ Content-Type: application/json
   ]
 }
 
-### 21. 수정 - 섹션 전체 교체 (모든 id 없음 = 기존 삭제 + 신규 생성)
+### 수정 - 섹션 전체 교체 (모든 id 없음 = 기존 삭제 + 신규 생성)
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "sections": [
@@ -451,9 +533,10 @@ Content-Type: application/json
   ]
 }
 
-### 22. 수정 - 복합 케이스 (기본정보 + 태그 + 섹션 동시 수정)
+### 수정 - 복합 케이스 (기본정보 + 태그 + 섹션 동시 수정)
 PATCH {{baseUrl}}/courses/{{courseId}}
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "Spring Boot 마스터 코스 [최종판]",
@@ -490,34 +573,43 @@ Content-Type: application/json
 # 삭제 API
 ##################################################
 
-### 23. 강좌 삭제
+### 강좌 삭제 - 강좌 생성한 강사 권한
 DELETE {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{instructor_jwt_token}}
+
+
+### 강좌 삭제 - 유효하지 않은 회원 권한
+DELETE {{baseUrl}}/courses/{{courseId}}
+Authorization: Bearer {{learner_jwt_token}}
 
 ##################################################
 # 에러 테스트
 ##################################################
 
-### 24. 에러 - 유효하지 않은 레벨
+### 에러 - 유효하지 않은 레벨
 POST {{baseUrl}}/courses
 Content-Type: application/json
-X-User-Id: {{instructorId}}
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "에러 테스트",
   "level": "INVALID_LEVEL"
 }
 
-### 25. 에러 - 존재하지 않는 강좌 조회
+### 에러 - 존재하지 않는 강좌 조회
 GET {{baseUrl}}/courses/99999
 Accept: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
-### 26. 에러 - 존재하지 않는 강좌 수정
+### 에러 - 존재하지 않는 강좌 수정
 PATCH {{baseUrl}}/courses/99999
 Content-Type: application/json
+Authorization: Bearer {{instructor_jwt_token}}
 
 {
   "title": "존재하지 않는 강좌 수정 시도"
 }
 
-### 27. 에러 - 존재하지 않는 강좌 삭제
+### 에러 - 존재하지 않는 강좌 삭제
 DELETE {{baseUrl}}/courses/99999
+Authorization: Bearer {{instructor_jwt_token}}

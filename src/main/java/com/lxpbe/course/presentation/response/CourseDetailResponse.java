@@ -1,9 +1,6 @@
 package com.lxpbe.course.presentation.response;
 
-import com.lxpbe.course.application.dto.LevelDto;
-import com.lxpbe.course.application.dto.SectionDto;
 import com.lxpbe.course.domain.Course;
-import com.lxpbe.course.application.port.InstructorResult;
 import com.lxpbe.course.application.port.TagResult;
 
 import java.time.Instant;
@@ -14,17 +11,17 @@ public record CourseDetailResponse(
         String title,
         String description,
         String thumbnailUrl,
-        LevelDto level,
-        InstructorResult instructor,
+        LevelResponse level,
+        InstructorResponse instructor,
         List<TagResult> tags,
         int durationInHours,
-        List<SectionDto> sections,
+        List<SectionResponse> sections,
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static CourseDetailResponse of(Course course, InstructorResult instructor, List<TagResult> tags) {
-        List<SectionDto> sectionDtos = course.getSections().stream()
-                .map(SectionDto::from)
+    public static CourseDetailResponse of(Course course, InstructorResponse instructor, List<TagResult> tags) {
+        List<SectionResponse> sections = course.getSections().stream()
+                .map(SectionResponse::from)
                 .toList();
 
         return new CourseDetailResponse(
@@ -32,11 +29,11 @@ public record CourseDetailResponse(
                 course.getTitle(),
                 course.getDescription(),
                 course.getThumbnailUrl(),
-                LevelDto.from(course.getDifficulty()),
+                LevelResponse.from(course.getDifficulty()),
                 instructor,
                 tags,
                 course.getTotalDurationHours(),
-                sectionDtos,
+                sections,
                 course.getCreatedAt(),
                 course.getUpdatedAt()
         );

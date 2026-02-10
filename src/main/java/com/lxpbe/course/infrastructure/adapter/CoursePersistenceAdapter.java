@@ -26,6 +26,11 @@ public class CoursePersistenceAdapter implements CourseRepository {
     }
 
     @Override
+    public Optional<Course> findByInstructorId(Long courseId, Long instructorId) {
+        return courseJpaRepository.findByIdAndInstructorId(courseId, instructorId);
+    }
+
+    @Override
     public Course save(Course course) {
         return courseJpaRepository.save(course);
     }

@@ -1,16 +1,16 @@
-package com.lxpbe.course.application.dto;
+package com.lxpbe.course.presentation.response;
 
 import com.lxpbe.course.domain.Lecture;
 
-public record LectureDto(
+public record LectureResponse(
         Long id,
         String title,
         String videoUrl,
         int order,
         Long durationInSeconds
 ) {
-    public static LectureDto from(Lecture lecture) {
-        return new LectureDto(
+    public static LectureResponse from(Lecture lecture) {
+        return new LectureResponse(
                 lecture.getId(),
                 lecture.getTitle(),
                 lecture.getVideoUrl(),

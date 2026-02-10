@@ -7,7 +7,6 @@ import java.util.Collections;
 import java.util.List;
 
 public record CourseCreateCommand(
-       Long instructorId,
        String title,
        String description,
        String thumbnailUrl,
@@ -15,9 +14,8 @@ public record CourseCreateCommand(
        List<Long> tags,
        List<SectionCreateCommand> sections
 ) {
-    public static CourseCreateCommand of(Long instructorId, CreateCourseRequest request) {
+    public static CourseCreateCommand from(CreateCourseRequest request) {
         return new CourseCreateCommand(
-                instructorId,
                 request.title(),
                 request.description(),
                 request.thumbnailUrl(),
