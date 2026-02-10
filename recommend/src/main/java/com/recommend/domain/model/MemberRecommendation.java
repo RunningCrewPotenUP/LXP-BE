@@ -1,10 +1,10 @@
 package com.recommend.domain.model;
 
 import com.lxp.common.domain.event.AggregateRoot;
-import com.lxp.recommend.domain.exception.DuplicateCourseException;
-import com.lxp.recommend.domain.exception.RecommendLimitExceededException;
-import com.lxp.recommend.domain.model.ids.CourseId;
-import com.lxp.recommend.domain.model.ids.MemberId;
+import com.recommend.domain.exception.DuplicateCourseException;
+import com.recommend.domain.exception.RecommendLimitExceededException;
+import com.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.MemberId;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;

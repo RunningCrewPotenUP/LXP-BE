@@ -1,6 +1,6 @@
 package com.recommend.domain.model;
 
-import com.lxp.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.CourseId;
 
 public class RecommendedCourse {
 

@@ -1,6 +1,6 @@
 package com.recommend.application.dto.response;
 
-import com.lxp.recommend.application.dto.RecommendedCourseDto;
+import com.recommend.application.dto.RecommendedCourseDto;
 
 import java.util.List;
 

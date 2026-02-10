@@ -1,6 +1,6 @@
 package com.recommend.infrastructure.batch.processor;
 
-import com.lxp.recommend.application.service.RecommendCommandService;
+import com.recommend.application.service.RecommendCommandService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;

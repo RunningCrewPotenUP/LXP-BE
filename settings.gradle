@@ -1,1 +1,2 @@
 rootProject.name = 'LXP-BE'
+include 'recommend'
