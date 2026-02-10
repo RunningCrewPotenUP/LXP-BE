@@ -63,11 +63,16 @@ public enum EnrollmentErrorCode implements ErrorCode {
             "ENRL_0011",
             "수강 상태 변경 실패: COMPLETED 상태로의 변경은 IN_PROGRESS 상태에서만 가능합니다."
     ),
-
     DATE_ORDER_CONSISTENCY_HAS_BROKEN(
             HttpStatus.INTERNAL_SERVER_ERROR,
             "ENRL_0012",
             "수강 주요 이벤트 발생 시각의 순서 정합성이 깨졌습니다."
+    ),
+
+    ENROLLMENT_ALREADY_EXISTS(
+            HttpStatus.CONFLICT,
+            "ENRL_0013",
+            "사용자의 해당 강좌에 대한 취소되지 않은 수강 건이 이미 존재합니다."
     ),
     ;
 
