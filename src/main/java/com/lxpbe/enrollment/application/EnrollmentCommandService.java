@@ -11,7 +11,6 @@ import com.lxpbe.enrollment.repository.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 public class EnrollmentCommandService {
@@ -26,12 +25,8 @@ public class EnrollmentCommandService {
 
     public EnrollmentCreatedResponse enroll(Long userId, Long courseId) {
 
-        Optional<Enrollment> optionalEnrollment
-                = enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(userId, courseId);
-
-        if (optionalEnrollment.isPresent()) {
-            throw new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS);
-        }
+        enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(userId, courseId)
+                .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS));
 
         Enrollment saved = enrollmentRepository.save(
                 Enrollment.builder()
@@ -50,12 +45,8 @@ public class EnrollmentCommandService {
 
     public EnrollmentCancelledResponse cancelByUser(EnrollmentCancelCommand command) {
 
-        Optional<Enrollment> optionalEnrollment = enrollmentRepository.findById(command.enrollmentId());
-        if (optionalEnrollment.isEmpty()) {
-            throw new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_EXISTS);
-        }
-
-        Enrollment target = optionalEnrollment.get();
+        Enrollment target = enrollmentRepository.findById(command.enrollmentId())
+                .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND));
 
         if (!Objects.equals(target.userId(), command.userId())) {
             throw new EnrollmentException(EnrollmentErrorCode.CANNOT_CANCEL_OTHER_PERSONS_ENROLLMENT);
