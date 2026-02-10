@@ -12,7 +12,7 @@ public record RegisterRequest(
         @NotBlank(message = "이메일은 비어있을 수 없습니다.")
         String email,
         @NotBlank(message = "비밀번호는 비어있을 수 없습니다.")
-        @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,20}$",
+        @Pattern(regexp = PASSWORD_REGEX,
                 message = "비밀번호는 영어 대/소문자, 숫자, 특수문자를 각각 1개 이상 포함하여 8~20자여야 합니다.")
         String password,
         @NotBlank(message = "이름은 비어있을 수 없습니다.")
@@ -24,4 +24,5 @@ public record RegisterRequest(
         @NotBlank(message = "레벨은 비어있을 수 없습니다.")
         Level level
 ) {
+    private static final String PASSWORD_REGEX = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\\\|,.<>\\/?]).{8,20}$";
 }
