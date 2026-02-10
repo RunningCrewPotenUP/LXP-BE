@@ -1,0 +1,67 @@
+### 회원가입
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test1234!",
+  "name": "홍길동",
+  "role": "LEARNER",
+  "tagIds": [1, 2, 3],
+  "level": "JUNIOR"
+}
+
+### 회원가입 - 이메일 중복 (409)
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test1234!",
+  "name": "홍길동",
+  "role": "LEARNER",
+  "tagIds": [1, 2, 3],
+  "level": "JUNIOR"
+}
+
+### 회원가입 - 비밀번호 정규식 미충족 (400)
+POST http://localhost:8080/auth/register
+Content-Type: application/json
+
+{
+  "email": "test2@example.com",
+  "password": "weak",
+  "name": "홍길동",
+  "role": "LEARNER",
+  "tagIds": [1],
+  "level": "JUNIOR"
+}
+
+### 로그인
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "Test1234!"
+}
+
+### 로그인 - 잘못된 비밀번호 (401)
+POST http://localhost:8080/auth/login
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "WrongPass1!"
+}
+
+### 인증 필요 API - 토큰 없이 (401)
+GET http://localhost:8080/users/me
+
+### 인증 필요 API - 유효하지 않은 토큰 (401 AUTH-004)
+GET http://localhost:8080/users/me
+Authorization: Bearer invalid.token.here
+
+### 인증 필요 API - 만료된 토큰 (401 AUTH-004)
+GET http://localhost:8080/users/me
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxIiwicm9sZXMiOlsiTEVBUk5FUiJdLCJpYXQiOjE3MDAwMDAwMDAsImV4cCI6MTcwMDAwMDAwMX0.expired
