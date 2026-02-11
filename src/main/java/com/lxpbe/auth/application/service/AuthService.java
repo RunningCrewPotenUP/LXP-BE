@@ -3,7 +3,7 @@ package com.lxpbe.auth.application.service;
 import com.lxpbe.auth.application.dto.LoginDto;
 import com.lxpbe.auth.application.dto.RegisterDto;
 import com.lxpbe.auth.domain.exception.AuthErrorCode;
-import com.lxpbe.common.exception.DomainException;
+import com.lxpbe.auth.domain.exception.AuthException;
 import com.lxpbe.common.security.JwtTokenProvider;
 import com.lxpbe.user.domain.User;
 import com.lxpbe.user.domain.exception.UserErrorCode;
@@ -39,10 +39,10 @@ public class AuthService {
     @Transactional(readOnly = true)
     public String login(LoginDto dto) {
         User user = userRepository.findByEmail(dto.email())
-                .orElseThrow(() -> new DomainException(AuthErrorCode.LOGIN_FAILED));
+                .orElseThrow(() -> new AuthException(AuthErrorCode.LOGIN_FAILED));
 
         if (!passwordEncoder.matches(dto.password(), user.getPassword())) {
-            throw new DomainException(AuthErrorCode.LOGIN_FAILED);
+            throw new AuthException(AuthErrorCode.LOGIN_FAILED);
         }
 
         return jwtTokenProvider.generateAccessToken(user.getId(), user.getRoles());
@@ -50,7 +50,7 @@ public class AuthService {
 
     private void validateDuplicateEmail(String email) {
         if (userRepository.existsByEmail(email)) {
-            throw new DomainException(UserErrorCode.DUPLICATE_EMAIL);
+            throw new AuthException(UserErrorCode.DUPLICATE_EMAIL);
         }
     }
 }
