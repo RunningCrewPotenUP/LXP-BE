@@ -6,7 +6,7 @@ import lombok.Builder;
 
 @Builder
 public record EnrollmentCancelCommand(
-        Long userId,
+        Long requesterId,
         Long enrollmentId,
         CancelReasonType reasonType,
         String reason

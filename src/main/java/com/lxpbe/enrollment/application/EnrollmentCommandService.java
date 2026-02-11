@@ -23,14 +23,14 @@ public class EnrollmentCommandService {
         this.enrollmentRepository = enrollmentRepository;
     }
 
-    public EnrollmentCreatedResponse enroll(Long userId, Long courseId) {
+    public EnrollmentCreatedResponse enroll(Long requesterId, Long courseId) {
 
-        enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(userId, courseId)
+        enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(requesterId, courseId)
                 .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS));
 
         Enrollment saved = enrollmentRepository.save(
                 Enrollment.builder()
-                        .userId(userId)
+                        .userId(requesterId)
                         .courseId(courseId)
                         .build()
         );
@@ -48,7 +48,7 @@ public class EnrollmentCommandService {
         Enrollment target = enrollmentRepository.findById(command.enrollmentId())
                 .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND));
 
-        if (!Objects.equals(target.userId(), command.userId())) {
+        if (!Objects.equals(target.userId(), command.requesterId())) {
             throw new EnrollmentException(EnrollmentErrorCode.CANNOT_CANCEL_OTHER_PERSONS_ENROLLMENT);
         }
 
