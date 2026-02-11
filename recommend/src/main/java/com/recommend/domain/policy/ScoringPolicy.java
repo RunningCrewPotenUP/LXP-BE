@@ -1,11 +1,12 @@
 package com.recommend.domain.policy;
 
 import com.recommend.domain.model.TagContext;
+import org.springframework.stereotype.Component;
 
 import java.util.Set;
 
 /**
- * 추천 점수 계산 정책
+ * 추천 점수 계산 정책 (Tier 1)
  *
  * 책임:
  * - 태그 매칭 시 가중치 적용
@@ -15,21 +16,33 @@ import java.util.Set;
  * - Explicit + Implicit 동시 존재 시 합산
  * - 예: Java가 관심사(1.0) + 수강 중(1.5) = 2.5점
  */
-public record ScoringPolicy(
-        double explicitTagWeight,
-        double implicitTagWeight
-) {
+@Component  // ← Spring Bean 등록
+public class ScoringPolicy {
+
+    private final double explicitTagWeight;
+    private final double implicitTagWeight;
+
     /**
-     * Compact Constructor: 유효성 검증
+     * 기본 생성자: Spring Bean 생성 시 사용
      */
-    public ScoringPolicy {
-        if (explicitTagWeight < 0 || implicitTagWeight < 0) {
-            throw new IllegalArgumentException("가중치는 0 이상이어야 합니다.");
-        }
+    public ScoringPolicy() {
+        this(1.0, 1.5);
     }
 
     /**
-     * 기본 정책: Implicit 태그를 더 우대
+     * 커스텀 가중치 생성자
+     */
+    public ScoringPolicy(double explicitTagWeight, double implicitTagWeight) {
+        if (explicitTagWeight < 0 || implicitTagWeight < 0) {
+            throw new IllegalArgumentException("가중치는 0 이상이어야 합니다.");
+        }
+        this.explicitTagWeight = explicitTagWeight;
+        this.implicitTagWeight = implicitTagWeight;
+    }
+
+    /**
+     * 기본 정책 팩토리 메서드 (하위 호환)
+     * 기존 코드와의 호환성을 위해 유지
      */
     public static ScoringPolicy defaultPolicy() {
         return new ScoringPolicy(1.0, 1.5);
@@ -64,6 +77,14 @@ public record ScoringPolicy(
         }
 
         return score;
+    }
+
+    public double getExplicitTagWeight() {
+        return explicitTagWeight;
+    }
+
+    public double getImplicitTagWeight() {
+        return implicitTagWeight;
     }
 
     @Override
