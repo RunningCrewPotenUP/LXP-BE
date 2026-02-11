@@ -21,7 +21,7 @@ import java.net.URI;
 
 @RestController
 @RequestMapping("/enrollments")
-public class EnrollmentController {
+public class EnrollmentController implements EnrollmentApi {
 
     private final EnrollmentCommandService enrollmentCommandService;
     private final EnrollmentQueryService enrollmentQueryService;
