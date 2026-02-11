@@ -9,8 +9,8 @@ import java.time.Instant;
 
 @Builder
 public record EnrollmentCancelledResponse(
-        long id,
-        long courseId,
+        Long id,
+        Long courseId,
         EnrollmentStatus status,
         Instant enrolledAt,
         Instant learningStartedAt,

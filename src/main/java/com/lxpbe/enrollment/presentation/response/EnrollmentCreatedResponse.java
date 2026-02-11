@@ -8,8 +8,8 @@ import java.util.Objects;
 
 @Builder
 public record EnrollmentCreatedResponse(
-        long id,
-        long courseId,
+        Long id,
+        Long courseId,
         EnrollmentStatus status,
         Instant enrolledAt
 ) {
