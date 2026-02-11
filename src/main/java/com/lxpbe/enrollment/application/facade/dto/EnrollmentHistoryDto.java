@@ -20,7 +20,7 @@ public record EnrollmentHistoryDto(
         Objects.requireNonNull(enrollmentId, REQUIRED_FIELD_ERROR_MESSAGE + "status");
     }
 
-    public EnrollmentHistoryDto of(Enrollment enrollment) {
+    public static EnrollmentHistoryDto of(Enrollment enrollment) {
         return EnrollmentHistoryDto.builder()
                 .enrollmentId(enrollment.id())
                 .userId(enrollment.userId())
