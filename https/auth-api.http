@@ -37,7 +37,7 @@ Content-Type: application/json
   "level": "JUNIOR"
 }
 
-### 로그인
+### 로그인 - 응답 Set-Cookie 헤더에 accessToken 포함
 POST http://localhost:8080/auth/login
 Content-Type: application/json
 
@@ -58,6 +58,5 @@ Content-Type: application/json
 ### 인증 필요 API - 토큰 없이 (401)
 GET http://localhost:8080/users/me
 
-### 인증 필요 API - 유효하지 않은 토큰 (401)
-GET http://localhost:8080/users/me
-Authorization: Bearer invalid.token.here
+### 로그아웃 - 쿠키 삭제
+POST http://localhost:8080/auth/logout

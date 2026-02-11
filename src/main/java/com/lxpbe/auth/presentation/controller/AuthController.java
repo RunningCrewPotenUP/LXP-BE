@@ -5,10 +5,10 @@ import com.lxpbe.auth.application.dto.RegisterDto;
 import com.lxpbe.auth.application.service.AuthService;
 import com.lxpbe.auth.presentation.request.LoginRequest;
 import com.lxpbe.auth.presentation.request.RegisterRequest;
-import com.lxpbe.auth.presentation.response.TokenResponse;
-import com.lxpbe.common.response.ApiResponse;
+import com.lxpbe.common.security.CookieProvider;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
+    private final CookieProvider cookieProvider;
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
@@ -29,8 +30,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<ApiResponse<TokenResponse>> login(@Valid @RequestBody LoginRequest request) {
-        TokenResponse tokenResponse = authService.login(LoginDto.from(request));
-        return ResponseEntity.ok(new ApiResponse<>(tokenResponse, null));
+    public ResponseEntity<Void> login(@Valid @RequestBody LoginRequest request) {
+        String accessToken = authService.login(LoginDto.from(request));
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.SET_COOKIE,
+                        cookieProvider.createAccessTokenCookie(accessToken).toString()
+                )
+                .build();
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        return ResponseEntity.ok()
+                .header(
+                        HttpHeaders.SET_COOKIE,
+                        cookieProvider.deleteAccessTokenCookie().toString()
+                )
+                .build();
     }
 }

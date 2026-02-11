@@ -4,6 +4,7 @@ import com.lxpbe.common.exception.DomainException;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
@@ -14,13 +15,13 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String AUTH_ERROR_ATTRIBUTE = "AUTH_ERROR";
-    private static final String AUTHORIZATION_HEADER = "Authorization";
-    private static final String BEARER_PREFIX = "Bearer ";
+    private static final String ACCESS_TOKEN_COOKIE = "accessToken";
     private static final String ROLE_PREFIX = "ROLE_";
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -53,10 +54,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     private String extractToken(HttpServletRequest request) {
-        String header = request.getHeader(AUTHORIZATION_HEADER);
-        if (header != null && header.startsWith(BEARER_PREFIX)) {
-            return header.substring(BEARER_PREFIX.length());
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return null;
         }
-        return null;
+        return Arrays.stream(cookies)
+                .filter(cookie -> ACCESS_TOKEN_COOKIE.equals(cookie.getName()))
+                .findFirst()
+                .map(Cookie::getValue)
+                .orElse(null);
     }
 }
