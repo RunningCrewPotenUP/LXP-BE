@@ -27,7 +27,7 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         ErrorCode errorCode = (ErrorCode) request.getAttribute(JwtAuthenticationFilter.AUTH_ERROR_ATTRIBUTE);
 
         if (errorCode == null) {
-            errorCode = AuthErrorCode.INVALID_TOKEN;
+            errorCode = AuthErrorCode.UNAUTHORIZED;
         }
 
         response.setStatus(errorCode.httpStatus().value());
