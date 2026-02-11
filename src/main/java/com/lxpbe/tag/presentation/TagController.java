@@ -1,7 +1,7 @@
 package com.lxpbe.tag.presentation;
 
 import com.lxpbe.tag.application.TagQueryService;
-import com.lxpbe.tag.presentation.response.TagResponse;
+import com.lxpbe.tag.application.result.TagResult;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -28,49 +28,49 @@ public class TagController {
     }
 
     @GetMapping
-    ResponseEntity<List<TagResponse>> findAll() {
-        List<TagResponse> body = tagQueryService.findAll();
+    ResponseEntity<List<TagResult>> findAll() {
+        List<TagResult> body = tagQueryService.findAll();
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<TagResponse> findById(
+    ResponseEntity<TagResult> findById(
             @PathVariable
             @Positive(message = "id 는 1 이상이어야합니다.")
             Long id
     ) {
-        TagResponse body = tagQueryService.findById(id);
+        TagResult body = tagQueryService.findById(id);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/findByIds")
-    ResponseEntity<List<TagResponse>> findByIds(
+    ResponseEntity<List<TagResult>> findByIds(
             @RequestParam(value = "ids", required = false)
             @NotNull(message = "id 목록은 null 일 수 없습니다.")
             @Size(min = 1, message = "id 목록은 비어있을 수 없습니다.")
             List<@NotNull Long> ids
     ) {
-        List<TagResponse> body = tagQueryService.findByIds(ids);
+        List<TagResult> body = tagQueryService.findByIds(ids);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("findByName")
-    ResponseEntity<TagResponse> findByName(
+    ResponseEntity<TagResult> findByName(
             @RequestParam
             @NotBlank(message = "name 은 blank 일 수 없습니다.")
             String name
     ) {
-        TagResponse body = tagQueryService.findByName(name);
+        TagResult body = tagQueryService.findByName(name);
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/search")
-    ResponseEntity<List<TagResponse>> search(
+    ResponseEntity<List<TagResult>> search(
             @RequestParam
             @NotBlank(message = "검색 키워드는 null 이거나 비어있을 수 없습니다.")
             String q
     ) {
-        List<TagResponse> body = tagQueryService.searchIdsByNameContaining(q);
+        List<TagResult> body = tagQueryService.searchIdsByNameContaining(q);
         return ResponseEntity.ok(body);
     }
 }
