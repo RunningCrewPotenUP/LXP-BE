@@ -15,7 +15,10 @@ public record EnrollmentCreatedResponse(
 ) {
 
     public EnrollmentCreatedResponse {
-        Objects.requireNonNull(status, "EnrollmentCreatedResponse 생성 실패: status == null");
-        Objects.requireNonNull(enrolledAt, "EnrollmentCreatedResponse 생성 실패: enrolledAt == null");
+        final String REQUIRED_FIELD_ERROR_MESSAGE_PREFIX = "수강 생성 성공 응답 시 필수 필드 누락: ";
+        Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "id");
+        Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "courseId");
+        Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "status");
+        Objects.requireNonNull(enrolledAt, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "enrolledAt");
     }
 }
