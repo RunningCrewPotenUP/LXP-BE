@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Set;
-
+//이제 사용 안함! 대체
 /**
  * Course BC 연동 Adapter
  * - HTTP 호출 제거, 로컬 Service 직접 호출
