@@ -1,8 +1,12 @@
 package com.lxpbe.course.domain;
 
+import com.lxpbe.common.domain.BaseEntity;
 import com.lxpbe.course.application.command.CourseCreateCommand;
 import com.lxpbe.course.application.command.CourseUpdateCommand;
+import com.lxpbe.course.application.command.SectionUpdateCommand;
 import com.lxpbe.course.domain.enums.Level;
+import com.lxpbe.course.domain.exception.CourseErrorCode;
+import com.lxpbe.course.domain.exception.CourseException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -19,7 +23,7 @@ import java.util.stream.Collectors;
 @Table(name = "course")
 @Entity
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Course {
+public class Course extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
@@ -28,25 +32,6 @@ public class Course {
     @Getter
     @Column(name = "instructor_id", nullable = false)
     private Long instructorId;
-
-    @Getter
-    @Column(nullable = false, updatable = false)
-    private Instant createdAt;
-
-    @Getter
-    @Column(nullable = false)
-    private Instant updatedAt;
-
-    @PrePersist
-    protected void onCreate() {
-        createdAt = Instant.now();
-        updatedAt = Instant.now();
-    }
-
-    @PreUpdate
-    protected void onUpdate() {
-        updatedAt = Instant.now();
-    }
 
     @Getter
     @Column(nullable = false)
@@ -91,6 +76,18 @@ public class Course {
     }
 
     public static Course create(Long instructorId, CourseCreateCommand command) {
+        if (instructorId == null) {
+            throw new CourseException(CourseErrorCode.INSTRUCTOR_ID_IS_REQUIRED_TO_CREATE_COURSE);
+        }
+
+        if (command.title() == null || command.title().isEmpty()) {
+            throw new CourseException(CourseErrorCode.TITLE_IS_REQUIRED_TO_CREATE_COURSE);
+        }
+
+        if (command.tags() == null || command.tags().isEmpty()) {
+            throw new CourseException(CourseErrorCode.TAG_IS_REQUIRED_TO_CREATE_COURSE);
+        }
+
         Course course = new Course(instructorId, command.title(), command.description(), command.thumbnailUrl(), command.level(), command.tags());
 
         if (command.sections() != null) {
@@ -109,21 +106,6 @@ public class Course {
         section.assignCourse(this);
     }
 
-    public void updateBasicInfo(String title, String description, String thumbnailUrl, Level difficulty) {
-        if (title != null) {
-            this.title = title;
-        }
-        if (description != null) {
-            this.description = description;
-        }
-        if (thumbnailUrl != null) {
-            this.thumbnailUrl = thumbnailUrl;
-        }
-        if (difficulty != null) {
-            this.difficulty = difficulty;
-        }
-    }
-
     public void update(CourseUpdateCommand command) {
         if (command.title() != null) {
             this.title = command.title();
@@ -139,44 +121,50 @@ public class Course {
         }
 
         if (command.tags() != null) {
-            List<Long> newTags = command.tags();
-
-            this.tags.removeIf(tag -> !newTags.contains(tag));
-            newTags.stream()
-                    .filter(tag -> !this.tags.contains(tag))
-                    .forEach(this.tags::add);
+            updateTags(command.tags());
         }
 
         if (command.sections() != null) {
-            Set<Long> commandSectionIds = command.sections().stream()
-                    .map(s -> s.id())
-                    .filter(id -> id != null)
-                    .collect(Collectors.toSet());
-
-            this.sections.removeIf(section -> !commandSectionIds.contains(section.getId()));
-
-            AtomicInteger sectionOrder = new AtomicInteger(1);
-            command.sections().forEach(sectionCommand -> {
-                if (sectionCommand.id() != null) {
-                    this.sections.stream()
-                            .filter(section -> section.getId().equals(sectionCommand.id()))
-                            .findFirst()
-                            .ifPresent(section -> {
-                                section.update(sectionCommand);
-                                section.updateOrder(sectionOrder.getAndIncrement());
-                            });
-                } else {
-                    Section newSection = Section.create(sectionCommand, sectionOrder.getAndIncrement());
-                    this.addSection(newSection);
-                }
-            });
+            updateSections(command.sections());
         }
     }
 
+    private void updateSections(List<SectionUpdateCommand> sections) {
+        Set<Long> commandSectionIds = sections.stream()
+                .map(s -> s.id())
+                .filter(id -> id != null)
+                .collect(Collectors.toSet());
 
-    public void clearSections() {
-        this.sections.clear();
+        this.sections.removeIf(section -> !commandSectionIds.contains(section.getId()));
+
+        AtomicInteger sectionOrder = new AtomicInteger(1);
+        sections.forEach(sectionCommand -> {
+            if (sectionCommand.id() != null) {
+                this.sections.stream()
+                        .filter(section -> section.getId().equals(sectionCommand.id()))
+                        .findFirst()
+                        .ifPresent(section -> {
+                            section.update(sectionCommand);
+                            section.updateOrder(sectionOrder.getAndIncrement());
+                        });
+            } else {
+                Section newSection = Section.create(sectionCommand, sectionOrder.getAndIncrement());
+                this.addSection(newSection);
+            }
+        });
     }
+
+    private void updateTags(List<Long> newTags) {
+        this.tags.removeIf(tag -> !newTags.contains(tag));
+        newTags.stream()
+                .filter(tag -> !this.tags.contains(tag))
+                .forEach(this.tags::add);
+
+        if (this.tags.isEmpty()) {
+            throw new CourseException(CourseErrorCode.TAG_IS_REQUIRED_TO_UPDATE_COURSE);
+        }
+    }
+
 
     public int getTotalDurationSeconds() {
         return this.sections.stream()

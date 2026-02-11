@@ -1,11 +1,11 @@
 package com.lxpbe.course.application.service;
 
-import com.lxpbe.common.exception.DomainException;
 import com.lxpbe.course.application.command.CourseCreateCommand;
 import com.lxpbe.course.application.command.CourseUpdateCommand;
 import com.lxpbe.course.application.repository.CourseRepository;
 import com.lxpbe.course.domain.Course;
 import com.lxpbe.course.domain.exception.CourseErrorCode;
+import com.lxpbe.course.domain.exception.CourseException;
 import com.lxpbe.course.presentation.response.InstructorResponse;
 import com.lxpbe.course.presentation.response.CourseDetailResponse;
 import com.lxpbe.course.presentation.response.CourseListResponse;
@@ -53,7 +53,7 @@ public class CourseService {
     @Transactional
     public CourseDetailResponse createCourse(Long instructorId, CourseCreateCommand command) {
         User user = userRepository.findByIdAndRolesContaining(instructorId, Role.INSTRUCTOR)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.INVALID_INSTRUCTOR));
+                .orElseThrow(() -> new CourseException(CourseErrorCode.INVALID_INSTRUCTOR));
 
         Course course =  Course.create(instructorId, command);
         Course savedCourse = courseRepository.save(course);
@@ -66,7 +66,7 @@ public class CourseService {
     @Transactional
     public CourseDetailResponse updateCourse(Long instructorId, Long courseId, UpdateCourseRequest request) {
         Course course = courseRepository.findByInstructorId(courseId, instructorId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_UPDATE_DENIED));
+                .orElseThrow(() -> new CourseException(CourseErrorCode.COURSE_UPDATE_DENIED));
 
         course.update(CourseUpdateCommand.of(courseId, request));
         List<TagResult> tags = tagQueryService.findByIds(course.getTags());
@@ -77,13 +77,13 @@ public class CourseService {
     @Transactional
     public void deleteCourse(Long instructorId, Long courseId) {
         Course course = courseRepository.findByInstructorId(courseId, instructorId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_DELETE_DENIED));
+                .orElseThrow(() -> new CourseException(CourseErrorCode.COURSE_DELETE_DENIED));
         courseRepository.delete(course);
     }
 
     public Course getCourseOrThrow(Long courseId) {
         return courseRepository.findById(courseId)
-                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
+                .orElseThrow(() -> new CourseException(CourseErrorCode.COURSE_NOT_FOUND));
     }
 
     public InstructorResponse getInstructor(Long id) {

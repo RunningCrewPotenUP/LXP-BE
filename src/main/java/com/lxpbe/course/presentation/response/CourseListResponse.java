@@ -4,6 +4,7 @@ import com.lxpbe.course.domain.Course;
 import com.lxpbe.tag.application.result.TagResult;
 
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record CourseListResponse(
@@ -14,8 +15,8 @@ public record CourseListResponse(
         LevelResponse level,
         InstructorResponse instructor,
         List<TagResponse> tags,
-        Instant createdAt,
-        Instant updatedAt
+        LocalDateTime createdAt,
+        LocalDateTime updatedAt
 ) {
     public static CourseListResponse of(Course course, InstructorResponse instructor, List<TagResult> tags) {
         return new CourseListResponse(

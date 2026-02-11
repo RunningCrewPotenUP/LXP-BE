@@ -14,7 +14,11 @@ public enum CourseErrorCode implements ErrorCode {
     LECTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_005", "강의를 찾을 수 없습니다"),
     INVALID_INSTRUCTOR(HttpStatus.BAD_REQUEST, "CRS_006", "강사만 강좌를 생성할 수 있습니다"),
     COURSE_UPDATE_DENIED(HttpStatus.FORBIDDEN, "CRS_007", " 강좌를 생성한 강사만 강좌를 수정할 수 있습니다"),
-    COURSE_DELETE_DENIED(HttpStatus.FORBIDDEN, "CRS_008", "강좌를 생성한 강사만 삭제할 수 있습니다")
+    COURSE_DELETE_DENIED(HttpStatus.FORBIDDEN, "CRS_008", "강좌를 생성한 강사만 삭제할 수 있습니다"),
+    INSTRUCTOR_ID_IS_REQUIRED_TO_CREATE_COURSE(HttpStatus.BAD_REQUEST, "CRS_009", "강사 id가 null이어서 강좌를 생성할 수 없습니다"),
+    TITLE_IS_REQUIRED_TO_CREATE_COURSE(HttpStatus.BAD_REQUEST, "CRS_010", "강좌 이름은 필수 값입니다"),
+    TAG_IS_REQUIRED_TO_CREATE_COURSE(HttpStatus.BAD_REQUEST, "CRS_011", "강좌 생성시 태그가 1개 이상 등록되어야 합니다"),
+    TAG_IS_REQUIRED_TO_UPDATE_COURSE(HttpStatus.BAD_REQUEST, "CRS_012", "강좌 업데이트시 태그 1개 이상 등록되어야 합니다")
     ;
 
     private final HttpStatus httpStatus;
