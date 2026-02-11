@@ -9,6 +9,7 @@ import java.util.Optional;
 public interface CourseRepository {
     Page<Course> searchByKeyword(String keyword, Pageable pageable);
     Optional<Course> findById(Long id);
+    Optional<Course> findByInstructorId(Long courseId, Long instructorId);
     Course save(Course course);
     void delete(Course course);
 }

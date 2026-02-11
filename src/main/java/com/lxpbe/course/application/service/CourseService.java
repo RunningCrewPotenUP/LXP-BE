@@ -6,13 +6,15 @@ import com.lxpbe.course.application.command.CourseUpdateCommand;
 import com.lxpbe.course.application.repository.CourseRepository;
 import com.lxpbe.course.domain.Course;
 import com.lxpbe.course.domain.exception.CourseErrorCode;
-import com.lxpbe.course.application.port.InstructorResult;
+import com.lxpbe.course.presentation.response.InstructorResponse;
 import com.lxpbe.course.application.port.TagResult;
 import com.lxpbe.course.application.port.TagPort;
-import com.lxpbe.course.application.port.UserPort;
 import com.lxpbe.course.presentation.response.CourseDetailResponse;
 import com.lxpbe.course.presentation.response.CourseListResponse;
 import com.lxpbe.course.presentation.request.UpdateCourseRequest;
+import com.lxpbe.user.domain.User;
+import com.lxpbe.user.domain.enums.Role;
+import com.lxpbe.user.infrastructure.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,15 +29,15 @@ import java.util.List;
 public class CourseService {
 
     private final CourseRepository courseRepository;
-    private final UserPort userPort;
+    private final UserRepository userRepository;
     private final TagPort tagPort;
 
     public Page<CourseListResponse> searchCourses(String keyword, Pageable pageable) {
         Page<Course> courses = courseRepository.searchByKeyword(keyword, pageable);
 
         return courses.map(course -> {
-            InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
-                    .orElse(InstructorResult.unknown(course.getInstructorId()));
+            InstructorResponse instructor = getInstructor(course.getInstructorId());
+            // TODO: Tag entity domain 작업 후 변경 예정
             List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
             return CourseListResponse.of(course, instructor, tags);
         });
@@ -44,46 +46,55 @@ public class CourseService {
     public CourseDetailResponse getCourse(Long courseId) {
         Course course = getCourseOrThrow(courseId);
 
-        InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
-                .orElse(InstructorResult.unknown(course.getInstructorId()));
+        // TODO: Tag entity domain 작업 후 변경 예정
         List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
 
-        return CourseDetailResponse.of(course, instructor, tags);
+        return CourseDetailResponse.of(course, getInstructor(course.getInstructorId()), tags);
     }
 
     @Transactional
-    public CourseDetailResponse createCourse(CourseCreateCommand command) {
-        InstructorResult instructor = userPort.findInstructorById(command.instructorId())
-                .orElse(InstructorResult.unknown(command.instructorId()));
-        List<TagResult> tags = tagPort.findTagsByIds(command.tags());
+    public CourseDetailResponse createCourse(Long instructorId, CourseCreateCommand command) {
+        User user = userRepository.findByIdAndRolesContaining(instructorId, Role.INSTRUCTOR)
+                .orElseThrow(() -> new DomainException(CourseErrorCode.INVALID_INSTRUCTOR));
 
-        Course course =  Course.create(command);
+        Course course =  Course.create(instructorId, command);
         Course savedCourse = courseRepository.save(course);
 
-        return CourseDetailResponse.of(savedCourse, instructor, tags);
+        // TODO: Tag entity domain 작업 후 변경 예정
+        List<TagResult> tags = tagPort.findTagsByIds(command.tags());
+
+        return CourseDetailResponse.of(savedCourse, new InstructorResponse(instructorId, user.getName()), tags);
     }
 
     @Transactional
-    public CourseDetailResponse updateCourse(Long courseId, UpdateCourseRequest request) {
-        Course course = getCourseOrThrow(courseId);
+    public CourseDetailResponse updateCourse(Long instructorId, Long courseId, UpdateCourseRequest request) {
+        Course course = courseRepository.findByInstructorId(courseId, instructorId)
+                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_UPDATE_DENIED));
 
         course.update(CourseUpdateCommand.of(courseId, request));
 
-        InstructorResult instructor = userPort.findInstructorById(course.getInstructorId())
-                .orElse(InstructorResult.unknown(course.getInstructorId()));
+        // TODO: Tag entity domain 작업 후 변경 예정
         List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
 
-        return CourseDetailResponse.of(course, instructor, tags);
+        return CourseDetailResponse.of(course, getInstructor(instructorId), tags);
     }
 
     @Transactional
-    public void deleteCourse(Long courseId) {
-        Course course = getCourseOrThrow(courseId);
+    public void deleteCourse(Long instructorId, Long courseId) {
+        Course course = courseRepository.findByInstructorId(courseId, instructorId)
+                .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_DELETE_DENIED));
         courseRepository.delete(course);
     }
 
     public Course getCourseOrThrow(Long courseId) {
         return courseRepository.findById(courseId)
                 .orElseThrow(() -> new DomainException(CourseErrorCode.COURSE_NOT_FOUND));
+    }
+
+    public InstructorResponse getInstructor(Long id) {
+        return userRepository.findByIdAndRolesContaining(id, Role.INSTRUCTOR)
+                .map(user -> new InstructorResponse(user.getId(), user.getName()))
+                .orElse(InstructorResponse.unknown(id));
+
     }
 }

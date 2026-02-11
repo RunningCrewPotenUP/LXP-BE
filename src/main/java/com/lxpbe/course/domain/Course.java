@@ -90,8 +90,8 @@ public class Course {
         this.tags = tags != null ? tags : new ArrayList<>();
     }
 
-    public static Course create(CourseCreateCommand command) {
-        Course course = new Course(command.instructorId(), command.title(), command.description(), command.thumbnailUrl(), command.level(), command.tags());
+    public static Course create(Long instructorId, CourseCreateCommand command) {
+        Course course = new Course(instructorId, command.title(), command.description(), command.thumbnailUrl(), command.level(), command.tags());
 
         if (command.sections() != null) {
             AtomicInteger sectionOrder = new AtomicInteger(1);

@@ -1,6 +1,7 @@
 package com.lxpbe.course.presentation.controller;
 
 import com.lxpbe.common.response.ApiResponse;
+import com.lxpbe.common.security.LoginUser;
 import com.lxpbe.course.application.command.CourseCreateCommand;
 import com.lxpbe.course.presentation.response.CourseDetailResponse;
 import com.lxpbe.course.presentation.response.CourseListResponse;
@@ -35,10 +36,10 @@ public class CourseController {
 
     @PostMapping
     public ResponseEntity<ApiResponse<CourseDetailResponse>> createCourse(
-            @Valid @RequestBody CreateCourseRequest request,
-            @RequestHeader(value = "X-User-Id", defaultValue = "1") Long instructorId
+            @LoginUser Long instructorId,
+            @Valid @RequestBody CreateCourseRequest request
     ) {
-        CourseDetailResponse result = courseService.createCourse(CourseCreateCommand.of(instructorId, request));
+        CourseDetailResponse result = courseService.createCourse(instructorId, CourseCreateCommand.from(request));
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(new ApiResponse<>(result, null));
     }
@@ -53,18 +54,20 @@ public class CourseController {
 
     @PatchMapping("/{courseId}")
     public ResponseEntity<ApiResponse<CourseDetailResponse>> updateCourse(
+            @LoginUser Long instructorId,
             @PathVariable Long courseId,
             @RequestBody UpdateCourseRequest request
     ) {
-        CourseDetailResponse result = courseService.updateCourse(courseId, request);
+        CourseDetailResponse result = courseService.updateCourse(instructorId, courseId, request);
         return ResponseEntity.ok(new ApiResponse<>(result, null));
     }
 
     @DeleteMapping("/{courseId}")
     public ResponseEntity<Void> deleteCourse(
+            @LoginUser Long instructorId,
             @PathVariable Long courseId
     ) {
-        courseService.deleteCourse(courseId);
+        courseService.deleteCourse(instructorId, courseId);
         return ResponseEntity.noContent().build();
     }
 }

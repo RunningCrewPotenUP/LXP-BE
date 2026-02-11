@@ -12,6 +12,9 @@ public enum CourseErrorCode implements ErrorCode {
     INVALID_LEVEL(HttpStatus.BAD_REQUEST, "CRS_003", "유효하지 않은 난이도입니다"),
     SECTION_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_004", "섹션을 찾을 수 없습니다"),
     LECTURE_NOT_FOUND(HttpStatus.NOT_FOUND, "CRS_005", "강의를 찾을 수 없습니다"),
+    INVALID_INSTRUCTOR(HttpStatus.BAD_REQUEST, "CRS_006", "강사만 강좌를 생성할 수 있습니다"),
+    COURSE_UPDATE_DENIED(HttpStatus.FORBIDDEN, "CRS_007", " 강좌를 생성한 강사만 강좌를 수정할 수 있습니다"),
+    COURSE_DELETE_DENIED(HttpStatus.FORBIDDEN, "CRS_008", "강좌를 생성한 강사만 삭제할 수 있습니다")
     ;
 
     private final HttpStatus httpStatus;
