@@ -5,8 +5,8 @@ import com.lxpbe.enrollment.application.EnrollmentCommandService;
 import com.lxpbe.enrollment.application.EnrollmentQueryService;
 import com.lxpbe.enrollment.application.command.EnrollmentCancelCommand;
 import com.lxpbe.enrollment.presentation.request.EnrollmentCancelRequest;
-import com.lxpbe.enrollment.presentation.response.EnrollmentCancelledResponse;
-import com.lxpbe.enrollment.presentation.response.EnrollmentCreatedResponse;
+import com.lxpbe.enrollment.application.result.EnrollmentCancelledResult;
+import com.lxpbe.enrollment.application.result.EnrollmentCreatedResult;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import org.springframework.http.ResponseEntity;
@@ -34,7 +34,7 @@ public class EnrollmentController {
     // ----- 수강 등록
 
     @PostMapping
-    public ResponseEntity<EnrollmentCreatedResponse> enroll(
+    public ResponseEntity<EnrollmentCreatedResult> enroll(
             @LoginUser
             Long userId,
 
@@ -43,7 +43,7 @@ public class EnrollmentController {
             @Positive(message = "courseId 는 음수일 수 없습니다.")
             Long courseId
     ) {
-        EnrollmentCreatedResponse response = enrollmentCommandService.enroll(userId, courseId);
+        EnrollmentCreatedResult response = enrollmentCommandService.enroll(userId, courseId);
         return ResponseEntity
                 .created(URI.create("/enrollments/" + response.id()))
                 .body(response);
@@ -52,13 +52,13 @@ public class EnrollmentController {
     // ----- 수강 취소
 
     @PatchMapping
-    public ResponseEntity<EnrollmentCancelledResponse> cancelByUser(
+    public ResponseEntity<EnrollmentCancelledResult> cancelByUser(
             @LoginUser
             Long userId,
             @RequestBody
             EnrollmentCancelRequest request
     ) {
-        EnrollmentCancelledResponse response
+        EnrollmentCancelledResult response
                 = enrollmentCommandService.cancelByUser(EnrollmentCancelCommand.of(userId, request));
         return ResponseEntity
                 .ok()

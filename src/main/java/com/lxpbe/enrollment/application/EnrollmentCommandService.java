@@ -5,8 +5,8 @@ import com.lxpbe.enrollment.domain.exception.EnrollmentErrorCode;
 import com.lxpbe.enrollment.domain.exception.EnrollmentException;
 import com.lxpbe.enrollment.domain.model.Enrollment;
 import com.lxpbe.enrollment.domain.model.enums.CancelType;
-import com.lxpbe.enrollment.presentation.response.EnrollmentCancelledResponse;
-import com.lxpbe.enrollment.presentation.response.EnrollmentCreatedResponse;
+import com.lxpbe.enrollment.application.result.EnrollmentCancelledResult;
+import com.lxpbe.enrollment.application.result.EnrollmentCreatedResult;
 import com.lxpbe.enrollment.repository.EnrollmentRepository;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +23,7 @@ public class EnrollmentCommandService {
         this.enrollmentRepository = enrollmentRepository;
     }
 
-    public EnrollmentCreatedResponse enroll(Long requesterId, Long courseId) {
+    public EnrollmentCreatedResult enroll(Long requesterId, Long courseId) {
 
         enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(requesterId, courseId)
                 .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS));
@@ -35,7 +35,7 @@ public class EnrollmentCommandService {
                         .build()
         );
 
-        return EnrollmentCreatedResponse.builder()
+        return EnrollmentCreatedResult.builder()
                 .id(saved.id())
                 .courseId(saved.courseId())
                 .status(saved.enrollmentStatus())
@@ -43,7 +43,7 @@ public class EnrollmentCommandService {
                 .build();
     }
 
-    public EnrollmentCancelledResponse cancelByUser(EnrollmentCancelCommand command) {
+    public EnrollmentCancelledResult cancelByUser(EnrollmentCancelCommand command) {
 
         Enrollment target = enrollmentRepository.findById(command.enrollmentId())
                 .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND));
@@ -55,7 +55,7 @@ public class EnrollmentCommandService {
         target.cancel(CancelType.SELF_SERVICE, command.reasonType(), command.reason());
         enrollmentRepository.save(target);
 
-        return EnrollmentCancelledResponse.builder()
+        return EnrollmentCancelledResult.builder()
                 .id(target.id())
                 .courseId(target.courseId())
                 .status(target.enrollmentStatus())
