@@ -114,7 +114,7 @@ Authorization: Bearer {{instructor_jwt_token}}
   ]
 }
 
-### 강좌 생성 - 최소 데이터
+### 강좌 생성 에러 - 태그 제외
 POST {{baseUrl}}/courses
 Content-Type: application/json
 Authorization: Bearer {{instructor_jwt_token}}
