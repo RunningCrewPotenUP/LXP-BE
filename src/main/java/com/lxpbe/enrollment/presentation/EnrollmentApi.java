@@ -27,7 +27,7 @@ public interface EnrollmentApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = EnrollmentApiResponseExamples.ENROLL_409)))
     })
-    ResponseEntity<EnrollmentCreatedResult> enroll(Long userId, Long courseId);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<EnrollmentCreatedResult>> enroll(Long userId, Long courseId);
 
     @Operation(summary = "수강 취소")
     @ApiResponses({
@@ -44,5 +44,5 @@ public interface EnrollmentApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = EnrollmentApiResponseExamples.CANCEL_404)))
     })
-    ResponseEntity<EnrollmentCancelledResult> cancelByUser(Long userId, EnrollmentCancelRequest request);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<EnrollmentCancelledResult>> cancelByUser(Long userId, EnrollmentCancelRequest request);
 }

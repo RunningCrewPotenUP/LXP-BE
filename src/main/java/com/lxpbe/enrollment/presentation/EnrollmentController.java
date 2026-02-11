@@ -1,5 +1,6 @@
 package com.lxpbe.enrollment.presentation;
 
+import com.lxpbe.common.response.ApiResponse;
 import com.lxpbe.common.security.LoginUser;
 import com.lxpbe.enrollment.application.EnrollmentCommandService;
 import com.lxpbe.enrollment.application.EnrollmentQueryService;
@@ -39,7 +40,7 @@ public class EnrollmentController implements EnrollmentApi {
     // ----- 수강 등록
 
     @PostMapping
-    public ResponseEntity<EnrollmentCreatedResult> enroll(
+    public ResponseEntity<ApiResponse<EnrollmentCreatedResult>> enroll(
             @LoginUser
             Long userId,
 
@@ -51,13 +52,13 @@ public class EnrollmentController implements EnrollmentApi {
         EnrollmentCreatedResult response = enrollmentCommandService.enroll(userId, courseId);
         return ResponseEntity
                 .created(URI.create("/enrollments/" + response.id()))
-                .body(response);
+                .body(ApiResponse.success(response));
     }
 
     // ----- 수강 취소
 
     @PatchMapping
-    public ResponseEntity<EnrollmentCancelledResult> cancelByUser(
+    public ResponseEntity<ApiResponse<EnrollmentCancelledResult>> cancelByUser(
             @LoginUser
             Long userId,
             @RequestBody
@@ -66,27 +67,26 @@ public class EnrollmentController implements EnrollmentApi {
         EnrollmentCancelledResult response
                 = enrollmentCommandService.cancelByUser(EnrollmentCancelCommand.of(userId, request));
         return ResponseEntity
-                .ok()
-                .body(response);
+                .ok(ApiResponse.success(response));
     }
 
     // ----- 나의 수강 조회
 
     @GetMapping
-    public ResponseEntity<List<EnrollmentSummary>> getMyEnrollments(@LoginUser Long userId) {
+    public ResponseEntity<ApiResponse<List<EnrollmentSummary>>> getMyEnrollments(@LoginUser Long userId) {
 
         List<EnrollmentSummary> response = enrollmentQueryService.myEnrollments(userId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 
     @GetMapping("/{enrollmentId}")
-    public ResponseEntity<EnrollmentDetails> getMyEnrollmentDetails(
+    public ResponseEntity<ApiResponse<EnrollmentDetails>> getMyEnrollmentDetails(
             @LoginUser
             Long userId,
             @PathVariable
             Long enrollmentId
     ) {
         EnrollmentDetails response = enrollmentQueryService.queryDetails(userId, enrollmentId);
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(ApiResponse.success(response));
     }
 }
