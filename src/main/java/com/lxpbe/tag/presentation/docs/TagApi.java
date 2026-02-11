@@ -20,7 +20,7 @@ public interface TagApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = TagApiResponseExamples.TAG_LIST_200)))
     })
-    ResponseEntity<List<TagResult>> findAll();
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<List<TagResult>>> findAll();
 
     @Operation(summary = "태그 ID로 조회")
     @ApiResponses({
@@ -31,7 +31,7 @@ public interface TagApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = TagApiResponseExamples.TAG_NOT_FOUND_404)))
     })
-    ResponseEntity<TagResult> findById(Long id);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<TagResult>> findById(Long id);
 
     @Operation(summary = "태그 ID 목록으로 조회")
     @ApiResponses({
@@ -39,7 +39,7 @@ public interface TagApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = TagApiResponseExamples.TAG_LIST_200)))
     })
-    ResponseEntity<List<TagResult>> findByIds(List<Long> ids);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<List<TagResult>>> findByIds(List<Long> ids);
 
     @Operation(summary = "태그 이름으로 조회")
     @ApiResponses({
@@ -47,7 +47,7 @@ public interface TagApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = TagApiResponseExamples.TAG_200)))
     })
-    ResponseEntity<TagResult> findByName(String name);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<TagResult>> findByName(String name);
 
     @Operation(summary = "태그 검색")
     @ApiResponses({
@@ -55,5 +55,5 @@ public interface TagApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = TagApiResponseExamples.TAG_LIST_200)))
     })
-    ResponseEntity<List<TagResult>> search(String q);
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<List<TagResult>>> search(String q);
 }
