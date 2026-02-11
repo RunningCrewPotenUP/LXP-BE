@@ -1,4 +1,4 @@
-package com.lxpbe.enrollment.presentation.response;
+package com.lxpbe.enrollment.application.result;
 
 import com.lxpbe.enrollment.domain.model.enums.CancelReasonType;
 import com.lxpbe.enrollment.domain.model.enums.CancelType;
@@ -9,7 +9,7 @@ import java.time.Instant;
 import java.util.Objects;
 
 @Builder
-public record EnrollmentCancelledResponse(
+public record EnrollmentCancelledResult(
         Long id,
         Long courseId,
         EnrollmentStatus status,
@@ -20,7 +20,7 @@ public record EnrollmentCancelledResponse(
         CancelReasonType reasonType,
         String reason
 ) {
-    public EnrollmentCancelledResponse {
+    public EnrollmentCancelledResult {
         final String REQUIRED_FIELD_ERROR_MESSAGE_PREFIX = "수강 취소 성공 응답 시 필수 필드 누락: ";
         Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "id");
         Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "courseId");

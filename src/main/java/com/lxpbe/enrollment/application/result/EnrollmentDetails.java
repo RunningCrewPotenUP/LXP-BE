@@ -1,4 +1,4 @@
-package com.lxpbe.enrollment.presentation.response;
+package com.lxpbe.enrollment.application.result;
 
 import lombok.Builder;
 
