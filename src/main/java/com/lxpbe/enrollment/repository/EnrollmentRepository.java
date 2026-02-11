@@ -11,4 +11,6 @@ import java.util.Optional;
 @Repository
 public interface EnrollmentRepository extends JpaRepository<Enrollment, Long> {
     Optional<Enrollment> findByUserIdAndCourseIdAndCancelledAtIsNull(Long userId, Long courseId);
+
+    List<Enrollment> findAllByUserId(Long userId);
 }
