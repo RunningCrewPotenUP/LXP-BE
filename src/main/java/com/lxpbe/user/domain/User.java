@@ -1,8 +1,8 @@
 package com.lxpbe.user.domain;
 
 import com.lxpbe.common.domain.BaseEntity;
-import com.lxpbe.common.exception.DomainException;
 import com.lxpbe.user.domain.exception.UserErrorCode;
+import com.lxpbe.user.domain.exception.UserException;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -97,13 +97,13 @@ public class User extends BaseEntity {
 
     private static void validateEmailRegex(String email) {
         if (!EMAIL_PATTERN.matcher(email).matches()) {
-            throw new DomainException(UserErrorCode.INVALID_EMAIL_FORMAT);
+            throw new UserException(UserErrorCode.INVALID_EMAIL_FORMAT);
         }
     }
 
     private static void validateCountTagIds(List<Long> tagIds) {
         if (tagIds.size() < MIN_TAG_COUNT || tagIds.size() > MAX_TAG_COUNT) {
-            throw new DomainException(UserErrorCode.INVALID_TAG_COUNT);
+            throw new UserException(UserErrorCode.INVALID_TAG_COUNT);
         }
     }
 }
