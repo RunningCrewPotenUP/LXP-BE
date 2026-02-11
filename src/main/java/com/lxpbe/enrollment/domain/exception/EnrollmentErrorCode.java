@@ -79,10 +79,15 @@ public enum EnrollmentErrorCode implements ErrorCode {
             "ENRL_0014",
             "수강을 찾을 수 없습니다."
     ),
-    CANNOT_CANCEL_OTHER_PERSONS_ENROLLMENT(
+    FORBIDDEN_ENROLLMENT_CANCEL(
             HttpStatus.FORBIDDEN,
             "ENRL_0015",
             "다른 사람의 수강을 취소할 수 없습니다."
+    ),
+    FORBIDDEN_ENROLLMENT_QUERY(
+            HttpStatus.FORBIDDEN,
+            "ENRL_0015",
+            "본인 또는 강사만 수강 정보를 조회할 수 있습니다."
     ),
     ;
 

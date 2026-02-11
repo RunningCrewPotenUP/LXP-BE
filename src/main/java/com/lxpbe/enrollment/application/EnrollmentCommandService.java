@@ -49,7 +49,7 @@ public class EnrollmentCommandService {
                 .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_NOT_FOUND));
 
         if (!Objects.equals(target.userId(), command.requesterId())) {
-            throw new EnrollmentException(EnrollmentErrorCode.CANNOT_CANCEL_OTHER_PERSONS_ENROLLMENT);
+            throw new EnrollmentException(EnrollmentErrorCode.FORBIDDEN_ENROLLMENT_CANCEL);
         }
 
         target.cancel(CancelType.SELF_SERVICE, command.reasonType(), command.reason());
