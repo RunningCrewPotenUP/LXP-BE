@@ -28,13 +28,13 @@ public class TagController {
     }
 
     @GetMapping
-    ResponseEntity<List<TagResult>> findAll() {
+    public ResponseEntity<List<TagResult>> findAll() {
         List<TagResult> body = tagQueryService.findAll();
         return ResponseEntity.ok(body);
     }
 
     @GetMapping("/{id}")
-    ResponseEntity<TagResult> findById(
+    public ResponseEntity<TagResult> findById(
             @PathVariable
             @Positive(message = "id 는 1 이상이어야합니다.")
             Long id
@@ -44,7 +44,7 @@ public class TagController {
     }
 
     @GetMapping("/findByIds")
-    ResponseEntity<List<TagResult>> findByIds(
+    public ResponseEntity<List<TagResult>> findByIds(
             @RequestParam(value = "ids", required = false)
             @NotNull(message = "id 목록은 null 일 수 없습니다.")
             @Size(min = 1, message = "id 목록은 비어있을 수 없습니다.")
@@ -55,7 +55,7 @@ public class TagController {
     }
 
     @GetMapping("findByName")
-    ResponseEntity<TagResult> findByName(
+    public ResponseEntity<TagResult> findByName(
             @RequestParam
             @NotBlank(message = "name 은 blank 일 수 없습니다.")
             String name
@@ -65,7 +65,7 @@ public class TagController {
     }
 
     @GetMapping("/search")
-    ResponseEntity<List<TagResult>> search(
+    public ResponseEntity<List<TagResult>> search(
             @RequestParam
             @NotBlank(message = "검색 키워드는 null 이거나 비어있을 수 없습니다.")
             String q
