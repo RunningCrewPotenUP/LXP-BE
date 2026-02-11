@@ -7,11 +7,11 @@ import com.lxpbe.course.application.repository.CourseRepository;
 import com.lxpbe.course.domain.Course;
 import com.lxpbe.course.domain.exception.CourseErrorCode;
 import com.lxpbe.course.presentation.response.InstructorResponse;
-import com.lxpbe.course.application.port.TagResult;
-import com.lxpbe.course.application.port.TagPort;
 import com.lxpbe.course.presentation.response.CourseDetailResponse;
 import com.lxpbe.course.presentation.response.CourseListResponse;
 import com.lxpbe.course.presentation.request.UpdateCourseRequest;
+import com.lxpbe.tag.application.TagQueryService;
+import com.lxpbe.tag.presentation.response.TagResponse;
 import com.lxpbe.user.domain.User;
 import com.lxpbe.user.domain.enums.Role;
 import com.lxpbe.user.infrastructure.repository.UserRepository;
@@ -30,24 +30,21 @@ public class CourseService {
 
     private final CourseRepository courseRepository;
     private final UserRepository userRepository;
-    private final TagPort tagPort;
+    private final TagQueryService tagQueryService;
 
     public Page<CourseListResponse> searchCourses(String keyword, Pageable pageable) {
         Page<Course> courses = courseRepository.searchByKeyword(keyword, pageable);
 
         return courses.map(course -> {
             InstructorResponse instructor = getInstructor(course.getInstructorId());
-            // TODO: Tag entity domain 작업 후 변경 예정
-            List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
+            List<TagResponse> tags = tagQueryService.findByIds(course.getTags());
             return CourseListResponse.of(course, instructor, tags);
         });
     }
 
     public CourseDetailResponse getCourse(Long courseId) {
         Course course = getCourseOrThrow(courseId);
-
-        // TODO: Tag entity domain 작업 후 변경 예정
-        List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
+        List<TagResponse> tags = tagQueryService.findByIds(course.getTags());
 
         return CourseDetailResponse.of(course, getInstructor(course.getInstructorId()), tags);
     }
@@ -60,8 +57,7 @@ public class CourseService {
         Course course =  Course.create(instructorId, command);
         Course savedCourse = courseRepository.save(course);
 
-        // TODO: Tag entity domain 작업 후 변경 예정
-        List<TagResult> tags = tagPort.findTagsByIds(command.tags());
+        List<TagResponse> tags = tagQueryService.findByIds(command.tags());
 
         return CourseDetailResponse.of(savedCourse, new InstructorResponse(instructorId, user.getName()), tags);
     }
@@ -73,8 +69,7 @@ public class CourseService {
 
         course.update(CourseUpdateCommand.of(courseId, request));
 
-        // TODO: Tag entity domain 작업 후 변경 예정
-        List<TagResult> tags = tagPort.findTagsByIds(course.getTags());
+        List<TagResponse> tags = tagQueryService.findByIds(course.getTags());
 
         return CourseDetailResponse.of(course, getInstructor(instructorId), tags);
     }

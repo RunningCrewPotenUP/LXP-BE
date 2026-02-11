@@ -1,7 +1,7 @@
 package com.lxpbe.course.presentation.response;
 
 import com.lxpbe.course.domain.Course;
-import com.lxpbe.course.application.port.TagResult;
+import com.lxpbe.tag.presentation.response.TagResponse;
 
 import java.time.Instant;
 import java.util.List;
@@ -13,11 +13,11 @@ public record CourseListResponse(
         String thumbnailUrl,
         LevelResponse level,
         InstructorResponse instructor,
-        List<TagResult> tags,
+        List<TagResponse> tags,
         Instant createdAt,
         Instant updatedAt
 ) {
-    public static CourseListResponse of(Course course, InstructorResponse instructor, List<TagResult> tags) {
+    public static CourseListResponse of(Course course, InstructorResponse instructor, List<TagResponse> tags) {
         return new CourseListResponse(
                 course.getId(),
                 course.getTitle(),
