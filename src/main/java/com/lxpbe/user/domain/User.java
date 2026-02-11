@@ -106,4 +106,17 @@ public class User extends BaseEntity {
             throw new UserException(UserErrorCode.INVALID_TAG_COUNT);
         }
     }
+
+    public void updateInfo(String name, Level level, List<Long> tagIds) {
+        if (tagIds != null) {
+            validateCountTagIds(tagIds);
+            this.tagIds = tagIds;
+        }
+        if (name != null) {
+            this.name = name;
+        }
+        if (level != null) {
+            this.level = level;
+        }
+    }
 }
