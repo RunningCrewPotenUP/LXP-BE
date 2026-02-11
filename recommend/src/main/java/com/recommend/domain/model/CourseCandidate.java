@@ -1,0 +1,29 @@
+package com.recommend.domain.model;
+
+import com.recommend.domain.model.ids.CourseId;
+import com.recommend.domain.model.ids.Level;
+
+import java.util.Set;
+
+/**
+ * 사용자의 레벨 및 태그에 드는 후보군
+ */
+public class CourseCandidate {
+    private final CourseId courseId;
+    private final Set<String> tags;
+    private final Level difficulty;  // ← Level → Level
+    private final boolean isPublic;
+
+    public CourseCandidate(CourseId courseId, Set<String> tags, Level difficulty, boolean isPublic) {
+        this.courseId = courseId;
+        this.tags = tags != null ? Set.copyOf(tags) : Set.of();
+        this.difficulty = difficulty;
+        this.isPublic = isPublic;
+    }
+
+    // Getters
+    public CourseId getCourseId() { return courseId; }
+    public Set<String> getTags() { return Set.copyOf(tags); }
+    public Level getDifficulty() { return difficulty; }  // ← 반환 타입 변경
+    public boolean isPublic() { return isPublic; }
+}
