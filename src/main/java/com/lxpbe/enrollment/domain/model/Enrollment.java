@@ -36,7 +36,7 @@ import static com.lxpbe.enrollment.domain.exception.EnrollmentErrorCode.CANCEL_T
         name = "enrollment",
         uniqueConstraints = @UniqueConstraint(
                 name = "uq_user_id_course_id",
-                columnNames = {"user_id", "course_id", "cancelledAt"}
+                columnNames = {"user_id", "course_id", "cancelled_at"}
         ),
         indexes = @Index(
                 name = "idx_course_id",
