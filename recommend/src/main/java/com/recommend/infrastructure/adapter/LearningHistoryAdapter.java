@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-
+//이제 사용 안함! 대체
 /**
  * Enrollment BC 연동 Adapter
  * - HTTP 호출 제거, 로컬 Service 직접 호출
