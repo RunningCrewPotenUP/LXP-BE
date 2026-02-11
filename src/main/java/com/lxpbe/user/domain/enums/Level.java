@@ -3,7 +3,6 @@ package com.lxpbe.user.domain.enums;
 import lombok.Getter;
 
 public enum Level {
-
     JUNIOR("주니어"),
     MIDDLE("미들"),
     SENIOR("시니어"),
