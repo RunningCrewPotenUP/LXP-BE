@@ -1,0 +1,8 @@
+### 내 정보 조회
+GET http://localhost:8080/users/me
+Content-Type: application/json
+
+### 내 정보 조회 - 토큰 없음 (401)
+GET http://localhost:8080/users/me
+Content-Type: application/json
+
