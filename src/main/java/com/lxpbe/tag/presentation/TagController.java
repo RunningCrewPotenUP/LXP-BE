@@ -18,7 +18,7 @@ import java.util.List;
 
 @Validated
 @RestController
-@RequestMapping("/api-v1/tags")
+@RequestMapping("/tags")
 public class TagController {
 
     private final TagQueryService tagQueryService;
