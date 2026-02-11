@@ -57,7 +57,7 @@ public class TagController {
     @GetMapping("findByName")
     ResponseEntity<TagResponse> findByName(
             @RequestParam
-            @NotBlank(message = "id 는 null 이거나 비어있을 수 없습니다.")
+            @NotBlank(message = "name 은 blank 일 수 없습니다.")
             String name
     ) {
         TagResponse body = tagQueryService.findByName(name);
