@@ -1,5 +1,6 @@
 package com.lxpbe.user.application.service;
 
+import com.lxpbe.common.security.JwtTokenProvider;
 import com.lxpbe.tag.domain.Tag;
 import com.lxpbe.tag.repository.TagRepository;
 import com.lxpbe.user.application.result.UserInfoResult;
@@ -19,12 +20,23 @@ import org.springframework.stereotype.Service;
 public class UserCommandService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     public UserInfoResult updateMyInfo(Long userId, String name, List<Long> tagIds, Level level) {
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
+        User user = getUser(userId);
         user.updateInfo(name, level, tagIds);
         List<Tag> tags = tagRepository.findAllByIdIn(user.getTagIds());
         return UserInfoResult.from(user, tags);
+    }
+
+    public String updateRole(Long userId) {
+        User user = getUser(userId);
+        user.updateRole();
+        return jwtTokenProvider.generateAccessToken(user.getId(), user.getRole());
+    }
+
+    private User getUser(Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserException(UserErrorCode.USER_NOT_FOUND));
     }
 }

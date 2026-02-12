@@ -102,6 +102,13 @@ public class User extends BaseEntity {
         }
     }
 
+    public void updateRole() {
+        if (this.role != Role.LEARNER) {
+            throw new UserException(UserErrorCode.ALREADY_INSTRUCTOR);
+        }
+        this.role = Role.INSTRUCTOR;
+    }
+
     public void updateInfo(String name, Level level, List<Long> tagIds) {
         if (tagIds != null) {
             validateCountTagIds(tagIds);
