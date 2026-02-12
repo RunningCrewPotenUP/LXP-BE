@@ -9,7 +9,6 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -18,9 +17,7 @@ import jakarta.persistence.Table;
 import com.lxpbe.user.domain.enums.Level;
 import com.lxpbe.user.domain.enums.Role;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.List;
-import java.util.Set;
 import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -54,11 +51,9 @@ public class User extends BaseEntity {
     private String name;
 
     @Getter
-    @Column(name = "role")
     @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "user_roles", joinColumns = @JoinColumn(name = "user_id"))
-    private Set<Role> roles = EnumSet.noneOf(Role.class);
+    @Column(nullable = false)
+    private Role role;
 
     @Getter
     @Enumerated(EnumType.STRING)
@@ -72,11 +67,11 @@ public class User extends BaseEntity {
 
     @Builder
     private User(String email, String password, String name,
-                 Set<Role> roles, Level level, List<Long> tagIds) {
+                 Role role, Level level, List<Long> tagIds) {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.roles = roles != null ? roles : EnumSet.noneOf(Role.class);
+        this.role = role;
         this.level = level;
         this.tagIds = tagIds != null ? tagIds : new ArrayList<>();
     }
@@ -89,7 +84,7 @@ public class User extends BaseEntity {
                 .email(email)
                 .password(encodedPassword)
                 .name(name)
-                .roles(EnumSet.of(role))
+                .role(role)
                 .level(level)
                 .tagIds(tagIds)
                 .build();
@@ -105,6 +100,13 @@ public class User extends BaseEntity {
         if (tagIds.size() < MIN_TAG_COUNT || tagIds.size() > MAX_TAG_COUNT) {
             throw new UserException(UserErrorCode.INVALID_TAG_COUNT);
         }
+    }
+
+    public void updateRole() {
+        if (this.role != Role.LEARNER) {
+            throw new UserException(UserErrorCode.ALREADY_INSTRUCTOR);
+        }
+        this.role = Role.INSTRUCTOR;
     }
 
     public void updateInfo(String name, Level level, List<Long> tagIds) {

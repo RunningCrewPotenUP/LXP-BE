@@ -45,7 +45,7 @@ public class AuthService {
             throw new AuthException(AuthErrorCode.LOGIN_FAILED);
         }
 
-        return jwtTokenProvider.generateAccessToken(user.getId(), user.getRoles());
+        return jwtTokenProvider.generateAccessToken(user.getId(), user.getRole());
     }
 
     private void validateDuplicateEmail(String email) {

@@ -32,4 +32,11 @@ public interface UserApi {
                             examples = @ExampleObject(value = UserApiResponseExamples.UPDATE_400)))
     })
     ResponseEntity<ApiResponse<UserInfoResponse>> updateMyInfo(Long userId, UpdateUserInfoRequest request);
+
+    @Operation(summary = "강사로 역할 변경", description = "LEARNER → INSTRUCTOR 역할 변경. 새로운 JWT 토큰이 쿠키에 설정됩니다.")
+    @ApiResponses({
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "200", description = "승격 성공 (Set-Cookie 헤더에 새 JWT 토큰 포함)"),
+            @io.swagger.v3.oas.annotations.responses.ApiResponse(responseCode = "400", description = "이미 강사 역할")
+    })
+    ResponseEntity<Void> updateUserRole(Long userId);
 }

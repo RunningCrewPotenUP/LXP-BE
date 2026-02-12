@@ -11,6 +11,7 @@ public enum UserErrorCode implements ErrorCode {
     INVALID_EMAIL_FORMAT(HttpStatus.BAD_REQUEST, "USR_002", "이메일 형식이 올바르지 않습니다."),
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "USR_003", "사용자를 찾을 수 없습니다."),
     INVALID_TAG_COUNT(HttpStatus.BAD_REQUEST, "USR_004", "태그는 최소 3개, 최대 5개여야 합니다."),
+    ALREADY_INSTRUCTOR(HttpStatus.BAD_REQUEST, "USR_005", "이미 강사입니다."),
     ;
 
     private final HttpStatus httpStatus;

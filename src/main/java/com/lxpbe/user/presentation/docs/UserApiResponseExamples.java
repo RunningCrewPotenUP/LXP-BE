@@ -11,7 +11,7 @@ public final class UserApiResponseExamples {
                     "userId": 1,
                     "email": "user@example.com",
                     "name": "홍길동",
-                    "roles": ["LEARNER"],
+                    "role": "LEARNER",
                     "tags": [
                         { "id": 1, "content": "LLM" },
                         { "id": 2, "content": "ChatGPT" },

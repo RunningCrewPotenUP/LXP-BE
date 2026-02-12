@@ -8,7 +8,7 @@ public record UserInfoResult(
         Long userId,
         String email,
         String name,
-        List<String> roles,
+        String role,
         List<TagInfo> tags,
         String level
 ) {
@@ -25,7 +25,7 @@ public record UserInfoResult(
                 user.getId(),
                 user.getEmail(),
                 user.getName(),
-                user.getRoles().stream().map(Enum::name).toList(),
+                user.getRole().name(),
                 tagInfos,
                 user.getLevel().name()
         );
