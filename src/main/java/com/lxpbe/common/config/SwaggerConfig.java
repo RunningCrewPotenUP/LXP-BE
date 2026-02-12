@@ -1,5 +1,6 @@
 package com.lxpbe.common.config;
 
+import com.lxpbe.common.exception.ErrorBody;
 import com.lxpbe.common.security.LoginUser;
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -46,24 +47,46 @@ public class SwaggerConfig {
     public GlobalOpenApiCustomizer globalResponseCustomizer() {
         return openApi -> openApi.getPaths().forEach((path, pathItem) ->
                 pathItem.readOperations().forEach(operation -> {
+
                     boolean isAuthApi = path.startsWith("/auth/");
-                    boolean isPublicGet = path.startsWith("/courses/") && operation.getOperationId() != null
-                            && (operation.getOperationId().contains("search") || operation.getOperationId().contains("getCourse"));
+                    boolean isPublicGet = path.startsWith("/courses/")
+                            && operation.getOperationId() != null
+                            && (operation.getOperationId().contains("search")
+                            || operation.getOperationId().contains("getCourse"));
 
                     if (!isAuthApi && !isPublicGet) {
+
                         operation.getResponses().computeIfAbsent("401", k ->
                                 new ApiResponse()
                                         .description("인증 실패")
-                                        .content(new Content().addMediaType("application/json",
-                                                new MediaType().examples(Map.of(
-                                                        "로그인 필요", new Example().value("""
-                                                                {"data": null, "error": {"code": "AUTH_004", "message": "로그인이 필요합니다."}}"""),
-                                                        "토큰 만료", new Example().value("""
-                                                                {"data": null, "error": {"code": "AUTH_003", "message": "만료된 토큰입니다."}}"""),
-                                                        "유효하지 않은 토큰", new Example().value("""
-                                                                {"data": null, "error": {"code": "AUTH_002", "message": "토큰이 유효하지 않습니다."}}""")
-                                                )))));
+                                        .content(new Content().addMediaType(
+                                                        "application/json",
+                                                        new MediaType()
+                                                                .examples(Map.of(
+                                                                        "로그인 필요", new Example().value(
+                                                                                new com.lxpbe.common.response.ApiResponse<>(
+                                                                                        null,
+                                                                                        new ErrorBody("AUTH_004", "로그인이 필요합니다.")
+                                                                                )
+                                                                        ),
+                                                                        "토큰 만료", new Example().value(
+                                                                                new com.lxpbe.common.response.ApiResponse<>(
+                                                                                        null,
+                                                                                        new ErrorBody("AUTH_003", "만료된 토큰입니다.")
+                                                                                )
+                                                                        ),
+                                                                        "유효하지 않은 토큰", new Example().value(
+                                                                                new com.lxpbe.common.response.ApiResponse<>(
+                                                                                        null,
+                                                                                        new ErrorBody("AUTH_003",
+                                                                                                "유효하지 않은 토큰입니다.")
+                                                                                )
+                                                                        )
+                                                                ))
+                                                )
+                                        ));
                     }
-                }));
+                })
+        );
     }
 }
