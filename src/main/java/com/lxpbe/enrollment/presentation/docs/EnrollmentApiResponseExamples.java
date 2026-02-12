@@ -86,59 +86,112 @@ public final class EnrollmentApiResponseExamples {
 
     public static final String QUERY_SUMMARIES_200 = """
             {
-            	"data": {
-            		"content": [
-            	    {
-            	      "id": 1,
-            				"courseId": 1,\s
-            				"status": "ENROLLED",  // ENROLLED, IN_PROGRESS, COMPLETED, CANCELLED
-            				"enrolledAt": "2025-12-11 12:48:22+09:00",  // enrolledAt 을 제외한 날짜은 null 일 수 있어요
-            				"learningStartedAt": "...",
-            
-            				"cancelledAt": "...",
-            				"cancelType": "SELF_SERVICE",
-            				"reasonType": "POOR_QUALITY",
-            				"reason": "강사님이 대머리여서 너무 눈부셔요"
-            
-            				"instructorId": 1,
-            	      "instructorName": "강사1",
-            
-            	      "thumbnailUrl": null,
-            	      "totalProgress": 0.0,
-            	      "courseTitle": "Java 기초 1",
-            	      "courseDescription": "주니어를 위한 자바 입문",
-            	      "courseLevel": "JUNIOR",
-            	      "tags": [
-                      {
-            					    "id": 83,
-            			        "category": "서비스",
-            			        "subCategory": "마케팅/운영",
-            			        "name": "그로스해킹",
-            			    },
-            			    {
-            					    "id": 90,
-            			        "category": "서비스",
-            			        "subCategory": "법률/경영",
-            			        "name": "IT법률",
-            			    },
-            			    {
-            					    "id": 93,
-            			        "category": "서비스",
-            			        "subCategory": "기타",
-            			        "name": "채용/면접",
-            			    },
-            	      ]
-            	    },
-            	    {
-            	      ...
-            	    }
-            		],  // end of content
-            	  "pageNumber": 0,
-            	  "pageSize": 10,
-            	  "totalElements": 219,
-            	  "totalPages": 22,
-            	},  // end of data
-            	"error": null,
+                "data": {
+                    "content": [
+                        {
+                            "id": 1,
+                            "courseId": 1,
+                            "status": "ENROLLED",
+                            "enrolledAt": "2026-02-12T06:56:08.517295Z",
+                            "learningStartedAt": null,
+                            "cancelledAt": null,
+                            "cancelType": null,
+                            "reasonType": null,
+                            "reason": null,
+                            "instructorId": 1,
+                            "instructorName": "김길동",
+                            "thumbnailUrl": "https://example.com/thumbnail.jpg",
+                            "courseTitle": "Spring Boot 완전 정복",
+                            "courseDescription": "Spring Boot를 활용한 백엔드 개발 마스터 과정",
+                            "courseLevel": "JUNIOR",
+                            "tags": [
+                                {
+                                    "tagId": 1,
+                                    "name": "LLM",
+                                    "category": "AI",
+                                    "subCategory": "Generative AI"
+                                },
+                                {
+                                    "tagId": 2,
+                                    "name": "ChatGPT",
+                                    "category": "AI",
+                                    "subCategory": "Generative AI"
+                                },
+                                {
+                                    "tagId": 3,
+                                    "name": "StableDiffusion",
+                                    "category": "AI",
+                                    "subCategory": "Generative AI"
+                                },
+                                {
+                                    "tagId": 4,
+                                    "name": "Midjourney",
+                                    "category": "AI",
+                                    "subCategory": "Generative AI"
+                                }
+                            ],
+                            "totalProgress": 0.0
+                        },
+                        {
+                            "id": 2,
+                            "courseId": 2,
+                            "status": "ENROLLED",
+                            "enrolledAt": "2026-02-12T08:55:28.504534Z",
+                            "learningStartedAt": null,
+                            "cancelledAt": null,
+                            "cancelType": null,
+                            "reasonType": null,
+                            "reason": null,
+                            "instructorId": 1,
+                            "instructorName": "김길동",
+                            "thumbnailUrl": "https://example.com/thumbnail.jpg",
+                            "courseTitle": "자바 완전 정복",
+                            "courseDescription": "자바 21 본격 해부!",
+                            "courseLevel": "JUNIOR",
+                            "tags": [
+                                {
+                                    "tagId": 5,
+                                    "name": "GenerativeAI",
+                                    "category": "AI",
+                                    "subCategory": "Generative AI"
+                                },
+                                {
+                                    "tagId": 6,
+                                    "name": "TensorFlow",
+                                    "category": "AI",
+                                    "subCategory": "머신러닝/딥러닝"
+                                }
+                            ],
+                            "totalProgress": 0.0
+                        }
+                    ],
+                    "pageable": {
+                        "pageNumber": 0,
+                        "pageSize": 10,
+                        "sort": {
+                            "empty": false,
+                            "sorted": true,
+                            "unsorted": false
+                        },
+                        "offset": 0,
+                        "paged": true,
+                        "unpaged": false
+                    },
+                    "last": true,
+                    "totalElements": 2,
+                    "totalPages": 1,
+                    "size": 10,
+                    "number": 0,
+                    "sort": {
+                        "empty": false,
+                        "sorted": true,
+                        "unsorted": false
+                    },
+                    "first": true,
+                    "numberOfElements": 2,
+                    "empty": false
+                },
+                "error": null
             }
             """;
 
@@ -147,44 +200,47 @@ public final class EnrollmentApiResponseExamples {
                 "data": {
                     "id": 1,
                     "courseId": 1,
-                    "status": "ENROLLED",  // ENROLLED, IN_PROGRESS, COMPLETED, CANCELLED
-                    "enrolledAt": "2025-12-11 12:48:22+09:00",  // enrolledAt 을 제외한 날짜은 null 일 수 있어요
-                    "learningStartedAt": "...",
-    
-                    "cancelledAt": "...",
-                    "cancelType": "SELF_SERVICE",
-                    "reasonType": "POOR_QUALITY",
-                    "reason": "강사님이 대머리여서 너무 눈부셔요"
-    
+                    "status": "ENROLLED",
+                    "enrolledAt": "2026-02-12T06:56:08.517295Z",
+                    "learningStartedAt": null,
+                    "cancelledAt": null,
+                    "cancelType": null,
+                    "reasonType": null,
+                    "reason": null,
                     "instructorId": 1,
-                    "instructorName": "강사1",
-        
-                    "thumbnailUrl": null,
-                    "totalProgress": 0.0,
-                    "courseTitle": "Java 기초 1",
-                    "courseDescription": "주니어를 위한 자바 입문",
+                    "instructorName": "김길동",
+                    "thumbnailUrl": "https://example.com/thumbnail.jpg",
+                    "courseTitle": "Spring Boot 완전 정복",
+                    "courseDescription": "Spring Boot를 활용한 백엔드 개발 마스터 과정",
                     "courseLevel": "JUNIOR",
                     "tags": [
                         {
-                                "id": 83,
-                            "category": "서비스",
-                            "subCategory": "마케팅/운영",
-                            "name": "그로스해킹",
+                            "tagId": 1,
+                            "name": "LLM",
+                            "category": "AI",
+                            "subCategory": "Generative AI"
                         },
                         {
-                                "id": 90,
-                            "category": "서비스",
-                            "subCategory": "법률/경영",
-                            "name": "IT법률",
+                            "tagId": 2,
+                            "name": "ChatGPT",
+                            "category": "AI",
+                            "subCategory": "Generative AI"
                         },
                         {
-                                "id": 93,
-                            "category": "서비스",
-                            "subCategory": "기타",
-                            "name": "채용/면접",
+                            "tagId": 3,
+                            "name": "StableDiffusion",
+                            "category": "AI",
+                            "subCategory": "Generative AI"
                         },
-                    ]
-                }
+                        {
+                            "tagId": 4,
+                            "name": "Midjourney",
+                            "category": "AI",
+                            "subCategory": "Generative AI"
+                        }
+                    ],
+                    "totalProgress": 0.0
+                },
                 "error": null
             }
             """;

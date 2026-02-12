@@ -15,12 +15,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
-
-import java.util.List;
 
 @Tag(name = "Enrollment", description = "수강 등록 API")
 public interface EnrollmentApi {
@@ -80,8 +82,10 @@ public interface EnrollmentApi {
                     )
             )
     })
-    ResponseEntity<com.lxpbe.common.response.ApiResponse<List<EnrollmentSummary>>> getMyEnrollments(
-            @LoginUser Long userId
+    ResponseEntity<com.lxpbe.common.response.ApiResponse<Page<EnrollmentSummary>>> getMyEnrollments(
+            @LoginUser Long userId,
+            @PageableDefault(size = 20, sort = "enrolledAt", direction = Sort.Direction.ASC)
+            Pageable request
     );
 
     @Operation(summary = "내 수강 상세 조회")
