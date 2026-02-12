@@ -12,6 +12,7 @@ import com.lxpbe.enrollment.application.result.EnrollmentCancelledResult;
 import com.lxpbe.enrollment.application.result.EnrollmentCreatedResult;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -27,15 +28,11 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/enrollments")
+@RequiredArgsConstructor
 public class EnrollmentController implements EnrollmentApi {
 
     private final EnrollmentCommandService enrollmentCommandService;
     private final EnrollmentQueryService enrollmentQueryService;
-
-    public EnrollmentController(EnrollmentCommandService enrollmentCommandService, EnrollmentQueryService enrollmentQueryService) {
-        this.enrollmentCommandService = enrollmentCommandService;
-        this.enrollmentQueryService = enrollmentQueryService;
-    }
 
     // ----- 수강 등록
 

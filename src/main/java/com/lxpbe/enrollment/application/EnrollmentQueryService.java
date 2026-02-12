@@ -6,6 +6,7 @@ import com.lxpbe.enrollment.domain.exception.EnrollmentErrorCode;
 import com.lxpbe.enrollment.domain.exception.EnrollmentException;
 import com.lxpbe.enrollment.domain.model.Enrollment;
 import com.lxpbe.enrollment.repository.EnrollmentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,15 +14,10 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
+@RequiredArgsConstructor
 public class EnrollmentQueryService {
 
     private final EnrollmentRepository enrollmentRepository;
-
-    public EnrollmentQueryService(
-            EnrollmentRepository enrollmentRepository
-    ) {
-        this.enrollmentRepository = enrollmentRepository;
-    }
 
     public EnrollmentDetails queryDetails(Long requesterId, Long enrollmentId) {
 
