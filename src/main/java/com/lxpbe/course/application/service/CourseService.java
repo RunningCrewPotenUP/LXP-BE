@@ -52,7 +52,7 @@ public class CourseService {
 
     @Transactional
     public CourseDetailResponse createCourse(Long instructorId, CourseCreateCommand command) {
-        User user = userRepository.findByIdAndRolesContaining(instructorId, Role.INSTRUCTOR)
+        User user = userRepository.findByIdAndRole(instructorId, Role.INSTRUCTOR)
                 .orElseThrow(() -> new CourseException(CourseErrorCode.INVALID_INSTRUCTOR));
 
         Course course =  Course.create(instructorId, command);
@@ -87,7 +87,7 @@ public class CourseService {
     }
 
     public InstructorResponse getInstructor(Long id) {
-        return userRepository.findByIdAndRolesContaining(id, Role.INSTRUCTOR)
+        return userRepository.findByIdAndRole(id, Role.INSTRUCTOR)
                 .map(user -> new InstructorResponse(user.getId(), user.getName()))
                 .orElse(InstructorResponse.unknown(id));
 
