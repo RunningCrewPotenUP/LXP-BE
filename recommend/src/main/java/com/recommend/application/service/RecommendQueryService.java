@@ -82,14 +82,15 @@ public class RecommendQueryService {
                         return null;
                     }
 
-                    // ✅ CourseMetaData → CourseInfo 변환
+                    // CourseMetaData → CourseInfo 변환
                     CourseInfo courseInfo = new CourseInfo(
                             courseMeta.courseId(),
-                            "강좌 제목",  // ← Adapter에서 title 포함 필요 (다음 단계)
+                            courseMeta.title(),
                             courseMeta.tags(),
                             courseMeta.difficulty(),
                             courseMeta.isPublic()
                     );
+
 
                     return new RecommendedCourseResponse(
                             courseInfo,
