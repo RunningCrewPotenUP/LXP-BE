@@ -22,7 +22,9 @@ public class EnrollmentCommandService {
     public EnrollmentCreatedResult enroll(Long requesterId, Long courseId) {
 
         enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(requesterId, courseId)
-                .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS));
+                .ifPresent(e -> {
+                    throw new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS);
+                });
 
         Enrollment saved = enrollmentRepository.save(
                 Enrollment.builder()
