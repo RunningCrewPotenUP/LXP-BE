@@ -13,6 +13,10 @@ import com.lxpbe.enrollment.application.result.EnrollmentCreatedResult;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -24,7 +28,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/enrollments")
@@ -70,9 +73,14 @@ public class EnrollmentController implements EnrollmentApi {
     // ----- 나의 수강 조회
 
     @GetMapping
-    public ResponseEntity<ApiResponse<List<EnrollmentSummary>>> getMyEnrollments(@LoginUser Long userId) {
+    public ResponseEntity<ApiResponse<Page<EnrollmentSummary>>> getMyEnrollments(
+            @LoginUser
+            Long userId,
+            @PageableDefault(size = 20, sort = "enrolledAt", direction = Sort.Direction.ASC)
+            Pageable request
+    ) {
 
-        List<EnrollmentSummary> response = enrollmentQueryService.myEnrollments(userId);
+        Page<EnrollmentSummary> response = enrollmentQueryService.myEnrollments(userId, request);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
