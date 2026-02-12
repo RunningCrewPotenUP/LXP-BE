@@ -11,8 +11,7 @@ public record TagResult(
         long tagId,
         String name,
         String category,
-        String subCategory,
-        TagStatus status
+        String subCategory
 ) {
     public static TagResult of(Tag tag) {
         Objects.requireNonNull(tag, "TagResponse 생성 실패: tag 가 null 입니다.");
@@ -22,7 +21,6 @@ public record TagResult(
                 .name(tag.name())
                 .category(tag.category())
                 .subCategory(tag.subCategory())
-                .status(tag.status())
                 .build();
     }
 }
