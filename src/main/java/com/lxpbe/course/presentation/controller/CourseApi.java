@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ public interface CourseApi {
                     content = @Content(mediaType = "application/json",
                             examples = @ExampleObject(value = CourseApiResponseExamples.SEARCH_200)))
     })
-    ResponseEntity<ApiResponse<Page<CourseListResponse>>> searchCourses(Pageable pageable, String keyword);
+    ResponseEntity<ApiResponse<Page<CourseListResponse>>> searchCourses(@ParameterObject Pageable pageable, String keyword);
 
     @Operation(summary = "강좌 생성")
     @ApiResponses({
