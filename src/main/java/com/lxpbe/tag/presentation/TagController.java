@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,13 +23,10 @@ import java.util.List;
 @Validated
 @RestController
 @RequestMapping("/tags")
+@RequiredArgsConstructor
 public class TagController implements TagApi {
 
     private final TagQueryService tagQueryService;
-
-    public TagController(TagQueryService tagQueryService) {
-        this.tagQueryService = tagQueryService;
-    }
 
     @GetMapping
     public ResponseEntity<ApiResponse<List<TagResult>>> findAll() {

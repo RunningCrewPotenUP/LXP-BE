@@ -5,17 +5,16 @@ import com.lxpbe.tag.domain.exception.TagErrorCode;
 import com.lxpbe.tag.domain.exception.TagException;
 import com.lxpbe.tag.application.result.TagResult;
 import com.lxpbe.tag.repository.TagRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class TagQueryService {
 
-
-    public TagQueryService(TagRepository tagRepository) {
-        this.tagRepository = tagRepository;
-    }
+    private final TagRepository tagRepository;
 
     public List<TagResult> findAll() {
         return tagRepository.findAll().stream()
