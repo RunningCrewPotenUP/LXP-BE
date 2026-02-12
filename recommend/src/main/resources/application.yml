@@ -1,0 +1,82 @@
+spring:
+  application:
+    name: recommend
+
+  # 프로파일 설정
+  profiles:
+    active: local  # local | dev | prod
+
+  # MySQL 데이터베이스 설정
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/lxp_recommend?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:password}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+
+  # JPA 설정
+  jpa:
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: validate  # 프로덕션: validate, 개발: update
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: true
+        use_sql_comments: true
+        default_batch_fetch_size: 100
+
+  # Spring Batch 설정
+  batch:
+    job:
+      enabled: false  # 수동 실행 (스케줄러로 제어)
+    jdbc:
+      initialize-schema: always
+
+#LangChain4j Google Gemini 설정
+langchain4j:
+  google-ai-gemini:
+    api-key: ${GEMINI_API_KEY}           # 환경 변수 필수
+    model-name: gemini-1.5-flash         # 빠른 응답 + 비용 효율
+    temperature: 0.3                     # 일관성 우선 (0.0~1.0)
+    max-output-tokens: 500               # JSON 응답에 충분
+    top-p: 0.95                          # 확률 분포 샘플링
+    timeout: PT10S                       # 10초 타임아웃 (ISO-8601 형식)
+    log-requests: true                   # 개발 시 요청 로깅
+    log-responses: true                  # 개발 시 응답 로깅
+
+#  추천 시스템 설정 (커스텀)
+recommend:
+  scoring:
+    strategy: hybrid                     # simple | langchain | hybrid
+    tier1-count: 6                       # 기존 추천 개수
+    tier2-count: 4                       # AI 확장 추천 개수
+    tier1-weight: 1.0                    # Tier 1 점수 가중치
+    tier2-weight: 0.7                    # Tier 2 점수 가중치 (낮게)
+
+  batch:
+    chunk-size: 10                       # Chunk 단위 처리 개수
+    cron: "0 0 3 * * *"                  # 매일 새벽 3시 실행
+    enabled: true                        # 스케줄러 활성화
+
+  ai:
+    enabled: true                        # AI 기능 활성화 (긴급 비활성화 가능)
+    fallback-on-error: true              # 에러 시 Tier 1만 사용
+    max-retries: 1                       # API 실패 시 재시도 횟수
+    retry-delay-ms: 1000                 # 재시도 대기 시간 (밀리초)
+
+# 로깅 설정
+logging:
+  level:
+    root: INFO
+    com.recommend: DEBUG                 # 추천 모듈 상세 로그
+    dev.langchain4j: DEBUG               # LangChain4j 디버그
+    org.springframework.batch: INFO
+    org.hibernate.SQL: DEBUG             # SQL 쿼리 출력
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE  # 파라미터 바인딩
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
