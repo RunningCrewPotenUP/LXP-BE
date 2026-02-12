@@ -15,7 +15,7 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class EnrollmentQueryService {
 
-    EnrollmentRepository enrollmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     public EnrollmentQueryService(
             EnrollmentRepository enrollmentRepository

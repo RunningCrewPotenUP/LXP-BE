@@ -10,7 +10,11 @@ import java.util.List;
 @Component
 public class EnrollmentFacade {
 
-    EnrollmentRepository enrollmentRepository;
+    private final EnrollmentRepository enrollmentRepository;
+
+    public EnrollmentFacade(EnrollmentRepository enrollmentRepository) {
+        this.enrollmentRepository = enrollmentRepository;
+    }
 
     public List<EnrollmentHistoryDto> findByUserId(Long userId) {
         return enrollmentRepository.findAllByUserId(userId).stream()
