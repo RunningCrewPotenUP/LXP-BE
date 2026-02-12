@@ -15,4 +15,8 @@ public record ApiResponse<T>(
             throw new IllegalArgumentException("data 와 error 는 동시에 null 이거나 not null 일 수 없습니다.");
         }
     }
+
+    public static <T> ApiResponse<T> success(T data) {
+        return new ApiResponse<>(data, null);
+    }
 }

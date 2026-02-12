@@ -8,25 +8,23 @@ import com.lxpbe.enrollment.domain.model.enums.CancelType;
 import com.lxpbe.enrollment.application.result.EnrollmentCancelledResult;
 import com.lxpbe.enrollment.application.result.EnrollmentCreatedResult;
 import com.lxpbe.enrollment.repository.EnrollmentRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class EnrollmentCommandService {
 
     private final EnrollmentRepository enrollmentRepository;
 
-    public EnrollmentCommandService(
-            EnrollmentRepository enrollmentRepository
-    ) {
-        this.enrollmentRepository = enrollmentRepository;
-    }
-
     public EnrollmentCreatedResult enroll(Long requesterId, Long courseId) {
 
         enrollmentRepository.findByUserIdAndCourseIdAndCancelledAtIsNull(requesterId, courseId)
-                .orElseThrow(() -> new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS));
+                .ifPresent(e -> {
+                    throw new EnrollmentException(EnrollmentErrorCode.ENROLLMENT_ALREADY_EXISTS);
+                });
 
         Enrollment saved = enrollmentRepository.save(
                 Enrollment.builder()

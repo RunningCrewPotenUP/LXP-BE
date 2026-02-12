@@ -6,32 +6,36 @@ public final class TagApiResponseExamples {
     }
 
     public static final String TAG_LIST_200 = """
-            [
-                {
+            {
+                "data": [
+                    {
+                        "tagId": 1,
+                        "name": "Spring",
+                        "category": "FRAMEWORK",
+                        "subCategory": "BACKEND",
+                        "status": "ACTIVE"
+                    },
+                    {
+                        "tagId": 2,
+                        "name": "React",
+                        "category": "FRAMEWORK",
+                        "subCategory": "FRONTEND",
+                        "status": "ACTIVE"
+                    }
+                ]
+                "error": null
+            """;
+
+    public static final String TAG_200 = """
+            {
+                "data": {
                     "tagId": 1,
                     "name": "Spring",
                     "category": "FRAMEWORK",
                     "subCategory": "BACKEND",
                     "status": "ACTIVE"
                 },
-                {
-                    "tagId": 2,
-                    "name": "React",
-                    "category": "FRAMEWORK",
-                    "subCategory": "FRONTEND",
-                    "status": "ACTIVE"
-                }
-            ]
-            """;
-
-    public static final String TAG_200 = """
-            {
-                "tagId": 1,
-                "name": "Spring",
-                "category": "FRAMEWORK",
-                "subCategory": "BACKEND",
-                "status": "ACTIVE"
-            }
+                "error": null
             """;
 
     public static final String TAG_NOT_FOUND_404 = """
