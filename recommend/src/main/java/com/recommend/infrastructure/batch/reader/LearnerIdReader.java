@@ -16,10 +16,10 @@ import java.util.List;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class LearnerIdReader implements ItemReader<Long> {  // ✅ String → Long 변경
+public class LearnerIdReader implements ItemReader<Long> {  //  변경
 
     private final JdbcTemplate jdbcTemplate;
-    private Iterator<Long> learnerIdIterator;  // ✅ String → Long 변경
+    private Iterator<Long> learnerIdIterator;  //  변경
     private boolean initialized = false;
 
     /**
@@ -29,9 +29,9 @@ public class LearnerIdReader implements ItemReader<Long> {  // ✅ String → Lo
      * @return 다음 학습자 ID (Long), 없으면 null (배치 종료 신호)
      */
     @Override
-    public Long read() {  // ✅ String → Long 변경
+    public Long read() {  //  변경
         if (!initialized) {
-            List<Long> learnerIds = fetchAllLearnerIds();  // ✅ String → Long 변경
+            List<Long> learnerIds = fetchAllLearnerIds();  //  변경
             log.info("[Batch Reader] Loaded {} learners", learnerIds.size());
             learnerIdIterator = learnerIds.iterator();
             initialized = true;
@@ -52,7 +52,7 @@ public class LearnerIdReader implements ItemReader<Long> {  // ✅ String → Lo
      *
      * TODO: Member BC Facade 호출로 변경 가능
      */
-    private List<Long> fetchAllLearnerIds() {  // ✅ String → Long 변경
+    private List<Long> fetchAllLearnerIds() {  //  변경
         String sql = "SELECT DISTINCT member_id FROM member_recommendations ORDER BY member_id";
         return jdbcTemplate.queryForList(sql, Long.class);  // ✅ String.class → Long.class 변경
     }

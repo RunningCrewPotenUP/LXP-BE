@@ -57,7 +57,7 @@ public class RecommendationBatchConfig {
      */
     public Step recommendationStep() {
         return new StepBuilder("recommendationStep", jobRepository)
-                .<Long, Long>chunk(chunkSize, transactionManager)  // ✅ String → Long 변경
+                .<Long, Long>chunk(chunkSize, transactionManager)  //  변경
                 .reader(learnerIdReader)
                 .processor(recommendationProcessor)
                 .writer(recommendationWriter)

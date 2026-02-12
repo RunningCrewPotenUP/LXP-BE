@@ -8,7 +8,7 @@ import java.util.Objects;
  */
 public class CourseId {
 
-    private final Long value;  // ✅ String → Long
+    private final Long value;  // 
 
     protected CourseId() {
         this.value = null; // JPA 재구성용
@@ -44,6 +44,6 @@ public class CourseId {
 
     @Override
     public String toString() {
-        return String.valueOf(value);  // ✅ Long → String 변환
+        return String.valueOf(value);  //  변환
     }
 }

@@ -8,44 +8,34 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
-/**
- * User BC Adapter
- * - LearnerProfileQueryPort 구현
- * - UserFacade를 통해 학습자 프로필 조회
- */
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class UserAdapter implements LearnerProfileQueryPort {
 
-    private final UserFacade userFacade;  // ✅ User BC Facade 주입
+    private final UserFacade userFacade;
 
-    /**
-     * 학습자 프로필 조회
-     *
-     * @param userId 학습자 ID
-     * @return 학습자 프로필 데이터
-     */
     @Override
     public Optional<LearnerProfileData> getProfile(Long userId) {
         log.debug("[UserAdapter] Fetching profile for userId={}", userId);
 
         try {
-            // 1. UserFacade 호출
             Optional<UserProfileDto> profileDto = userFacade.getProfile(userId);
 
-            // 2. Facade DTO → Application DTO 변환
             return profileDto.map(dto -> new LearnerProfileData(
-                    dto.userId(),
-                    dto.interestTags(),  // Set<String> 그대로 전달
-                    dto.level()          // String 그대로 전달
+                    dto.userId(),                           // Long
+                    new HashSet<>(dto.interestTags()),      // Set<String> (explicitTags)
+                    Set.of(),                               // Set<String> (implicitTags - 빈 Set)
+                    dto.level().name()                      // ✅ Enum → String 변환
             ));
 
         } catch (Exception e) {
             log.error("[UserAdapter] Failed to fetch profile for userId={}", userId, e);
-            return Optional.empty();  // ✅ 예외 발생 시 빈 Optional 반환
+            return Optional.empty();
         }
     }
 }

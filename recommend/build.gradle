@@ -22,13 +22,15 @@ repositories {
 }
 
 dependencies {
-    // 기존 Spring Boot
+    // ✅ 루트 프로젝트 참조 (이제 작동함)
+    implementation project(':')
+
+    // 기존 의존성들...
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-security'
     implementation 'org.springframework.boot:spring-boot-starter-batch'
 
-    // MySQL Driver (추가)
     runtimeOnly 'com.mysql:mysql-connector-j'
 
     // JWT
@@ -38,11 +40,11 @@ dependencies {
 
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.17.0'
 
-    //  LangChain4j Core
+    // LangChain4j Core
     implementation 'dev.langchain4j:langchain4j:0.35.0'
     implementation 'dev.langchain4j:langchain4j-spring-boot-starter:0.35.0'
 
-    //  Google Gemini Integration
+    // Google Gemini Integration
     implementation 'dev.langchain4j:langchain4j-google-ai-gemini:0.35.0'
 
     // Lombok

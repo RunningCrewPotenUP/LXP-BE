@@ -13,7 +13,7 @@ import java.util.Set;
  * Course BC 연동 Adapter
  * - HTTP 호출 제거, 로컬 Service 직접 호출
  */
-@Component
+//@Component
 @RequiredArgsConstructor
 @Slf4j
 public class CourseMetaAdapter implements CourseMetaQueryPort {
