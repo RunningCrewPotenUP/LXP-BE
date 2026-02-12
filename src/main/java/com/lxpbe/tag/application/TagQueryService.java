@@ -12,7 +12,6 @@ import java.util.List;
 @Service
 public class TagQueryService {
 
-    TagRepository tagRepository;
 
     public TagQueryService(TagRepository tagRepository) {
         this.tagRepository = tagRepository;
