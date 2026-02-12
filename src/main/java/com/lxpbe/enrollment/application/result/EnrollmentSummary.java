@@ -3,9 +3,8 @@ package com.lxpbe.enrollment.application.result;
 import com.lxpbe.enrollment.domain.model.enums.CancelReasonType;
 import com.lxpbe.enrollment.domain.model.enums.CancelType;
 import com.lxpbe.enrollment.domain.model.enums.EnrollmentStatus;
-import com.lxpbe.enrollment.repository.view.EnrollmentDetailsView;
-import com.lxpbe.enrollment.repository.view.EnrollmentSummaryView;
-import com.lxpbe.tag.domain.Tag;
+import com.lxpbe.enrollment.repository.projection.EnrollmentSummaryProjectionRow;
+import com.lxpbe.tag.application.result.TagResult;
 import lombok.Builder;
 
 import java.time.Instant;
@@ -32,7 +31,7 @@ public record EnrollmentSummary(
         String courseDescription,
         String courseLevel,
 
-        List<Tag> tags,                 // 1 개 이상의 태그를 포함하고 있어야 함
+        List<TagResult> tags,                 // 1 개 이상의 태그를 포함하고 있어야 함
 
         // To Do: 진행도 개발 이후 붙이기
         Double totalProgress
@@ -57,31 +56,28 @@ public record EnrollmentSummary(
         // Objects.requireNonNull(status, REQUIRED_FIELD_ERROR_MESSAGE_PREFIX + "totalProgress");
     }
 
-    public static EnrollmentSummary of(EnrollmentSummaryView view) {
+    public static EnrollmentSummary of(EnrollmentSummaryProjectionRow row, List<TagResult> tags) {
         return EnrollmentSummary.builder()
-                .id(view.getEnrollmentId())
-                .courseId(view.getCourseId())
-                .status(view.getEnrollmentStatus())
-                .enrolledAt(view.getEnrolledAt())
-                .learningStartedAt(view.getLearningStartedAt())
+                .id(row.getId())
+                .courseId(row.getCourseId())
+                .status(row.getStatus())
+                .enrolledAt(row.getEnrolledAt())
+                .learningStartedAt(row.getLearningStartedAt())
 
-                .cancelledAt(view.getCancelledAt())
-                .cancelType(view.getCancelType())
-                .reasonType(view.getCancelReasonType())
-                .reason(view.getCancelReasonComment())
+                .cancelledAt(row.getCancelledAt())
+                .cancelType(row.getCancelType())
+                .reasonType(row.getReasonType())
+                .reason(row.getReason())
 
-                .instructorId(view.getInstructorId())
-                .instructorName(view.getInstructorName())
+                .instructorId(row.getInstructorId())
+                .instructorName(row.getInstructorName())
 
-                .thumbnailUrl(view.getThumbnailUrl())
-                .courseTitle(view.getCourseTitle())
-                .courseDescription(view.getCourseDescription())
-                .courseLevel(view.getCourseLevel())
-                .tags(view.getTags())
-
-                // To Do: Progress 개발 후 여기에 적용
+                .thumbnailUrl(row.getThumbnailUrl())
+                .courseTitle(row.getCourseTitle())
+                .courseDescription(row.getCourseDescription())
+                .courseLevel(row.getCourseLevel().name())
+                .tags(tags)
                 .totalProgress(0.0)
-
                 .build();
     }
 }
