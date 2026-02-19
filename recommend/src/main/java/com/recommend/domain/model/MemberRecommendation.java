@@ -121,7 +121,7 @@ public class MemberRecommendation {
      */
     protected void registerEvent(Object event) {
         if (event == null) {
-            throw new IllegalArgumentException("Domain event must not be null");
+            throw new IllegalArgumentException("Domain event 는 null일 수 없습니다.");
         }
         this.domainEvents.add(event);
     }

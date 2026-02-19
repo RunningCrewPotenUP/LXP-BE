@@ -1,5 +1,6 @@
 package com.recommend.infrastructure.web;
 
+import com.lxpbe.common.security.LoginUser;
 import com.recommend.application.service.RecommendCommandService;
 import com.recommend.application.service.RecommendQueryService;
 import com.recommend.infrastructure.web.dto.response.RecommendationListResponse;
@@ -35,7 +36,7 @@ public class RecommendationController {
      */
     @GetMapping("/me")
     public ResponseEntity<RecommendationListResponse> getMyRecommendations(
-            @AuthenticationPrincipal Long userId  // ✅ Spring Security 사용
+            @LoginUser Long userId
     ) {
         log.info("[추천 조회] userId={}", userId);
 
@@ -54,12 +55,12 @@ public class RecommendationController {
      */
     @PostMapping("/refresh")
     public ResponseEntity<Void> refreshRecommendation(
-            @AuthenticationPrincipal Long userId  // ✅ Spring Security 사용
+            @LoginUser Long userId  //
     ) {
         log.info("[추천 갱신] userId={}", userId);
 
         // 추천 재계산 (Facade 호출하여 계산)
-        commandService.refreshRecommendations(userId);  // ✅ 메서드명 수정
+        commandService.refreshRecommendations(userId);
 
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }

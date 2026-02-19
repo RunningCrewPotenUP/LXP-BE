@@ -20,7 +20,7 @@ public class RecommendedCourseItemJpaEntity {
     private MemberRecommendationJpaEntity recommendation;
 
     @Column(name = "course_id", nullable = false)
-    private Long courseId; // ✅ String → Long
+    private Long courseId; // 
 
     @Column(name = "score", nullable = false)
     private double score;
@@ -29,7 +29,7 @@ public class RecommendedCourseItemJpaEntity {
     private int rank;
 
     public static RecommendedCourseItemJpaEntity of(
-            Long courseId,  // ✅ String → Long
+            Long courseId,  // 
             double score,
             int rank
     ) {

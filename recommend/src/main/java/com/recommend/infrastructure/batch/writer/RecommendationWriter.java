@@ -14,7 +14,7 @@ import java.util.List;
  */
 @Slf4j
 @Component
-public class RecommendationWriter implements ItemWriter<Long> {  // ✅ String → Long 변경
+public class RecommendationWriter implements ItemWriter<Long> {  //  변경
 
     /**
      * Chunk 단위로 처리 완료된 학습자 ID 로깅
@@ -22,7 +22,7 @@ public class RecommendationWriter implements ItemWriter<Long> {  // ✅ String �
      * @param chunk 처리 완료된 학습자 ID 목록 (Chunk 크기만큼, Long 타입)
      */
     @Override
-    public void write(Chunk<? extends Long> chunk) throws Exception {  // ✅ String → Long 변경
+    public void write(Chunk<? extends Long> chunk) throws Exception {  //  변경
         if (chunk.isEmpty()) {
             return;
         }

@@ -8,13 +8,13 @@ import java.util.Objects;
  */
 public class MemberId {
 
-    private final Long value;  // ✅ String → Long
+    private final Long value;  // 
 
     protected MemberId() {
         this.value = null; // JPA 재구성용
     }
 
-    public MemberId(Long value) {  // ✅ Long 파라미터
+    public MemberId(Long value) {  //  Long 파라미터
         if (value == null) {
             throw new IllegalArgumentException("MemberId cannot be null");
         }
@@ -44,6 +44,6 @@ public class MemberId {
 
     @Override
     public String toString() {
-        return String.valueOf(value);  // ✅ Long → String 변환
+        return String.valueOf(value);  //  변환
     }
 }
